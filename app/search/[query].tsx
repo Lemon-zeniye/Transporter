@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const App = () => {
+const Search = () => {
   return (
-    <View className="bg-white">
-      <Text>App</Text>
+    <View>
+      <Text>Search</Text>
     </View>
   );
 };
 
-export default App;
+export default Search;

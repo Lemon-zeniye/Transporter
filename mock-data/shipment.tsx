@@ -1,0 +1,242 @@
+export const shipments = [
+  {
+    id: 1,
+    shipmentNumber: "SHIP-001",
+    shipmentDate: "10/15/2024",
+    pickupLocations: {
+      multiple_pickup_location: false,
+      pickup_location: "Yeka, Gulf, Southern Region, Papua New Guinea",
+      pickup_date: "10/17/2024",
+      from: "12:49",
+      to: "12:52",
+      contact_person: {
+        full_name: "Kebede Guracha Mega",
+        phone_number: 987654321,
+        email: "kebede@gmail.com",
+      },
+      id: "0fdd934b-0235-4c54-b9a6-5b0bad3054fb",
+    },
+    items: [
+      {
+        itemCategory: "Parcels and Small Packages",
+        packagingType: "Pallets",
+        itemDescription: "Item one",
+        quantity: 12,
+        dimension: {
+          length: 3,
+          width: 3,
+          height: 3,
+        },
+        weight: 56,
+        totalWeight: 672,
+        dropOffLocations: [
+          {
+            multiple_dropoff_location: true,
+            dropoff_location: "Yeka, Agago, Northern Region, Uganda",
+            delivery_date: "10/23/2024",
+            reciver: {
+              full_name: "Nati Tolosa Gadi",
+              phone_number: 987654321,
+              email: "nati@gmail.com",
+            },
+            quantity: 4,
+            id: "7093f5bb-557b-49ac-9f80-dcb484c54e67",
+          },
+          {
+            multiple_dropoff_location: false,
+            dropoff_location: "Yeka, Addis Ababa, 2310, Ethiopia",
+            delivery_date: "10/23/2024",
+            reciver: {
+              full_name: "Babi",
+              phone_number: 98765432,
+              email: "babi@gmail.com",
+            },
+            quantity: 8,
+            id: "8864676d-de78-4021-ab8c-c0111248f9c7",
+          },
+        ],
+        id: "7ed740ca-9655-4fbc-befc-588384946fc2",
+      },
+      {
+        id: "ad705ba7-f358-4d83-a336-30fd219a73b8",
+        itemCategory: "Bulk Items",
+        packagingType: "Pallets",
+        itemDescription: "Item Two",
+        quantity: 10,
+        dimension: {
+          length: 1,
+          width: 1,
+          height: 1,
+        },
+        weight: 12,
+        totalWeight: 120,
+        dropOffLocations: [
+          {
+            multiple_dropoff_location: true,
+            dropoff_location: "Yeka, Agago, Northern Region, Uganda",
+            delivery_date: "10/23/2024",
+            reciver: {
+              full_name: "Nati Tolosa Gadi",
+              phone_number: 987654321,
+              email: "nati@gmail.com",
+            },
+            quantity: 10,
+            id: "7093f5bb-557b-49ac-9f80-dcb484c54e67",
+          },
+        ],
+      },
+    ],
+    driver: {
+      full_name: "John Doe",
+      contact_number: "123456789",
+    },
+    vehicle: {
+      vehicleNumber: "AB-1234",
+      vehicleType: "Truck",
+    },
+    status: "Picked",
+  },
+  {
+    id: 2,
+    shipmentNumber: "SHIP-002",
+    shipmentDate: "10/16/2024",
+    destination: "Nairobi, Kenya",
+    status: "Pending",
+    pickupLocations: {
+      multiple_pickup_location: true,
+      pickup_location: "Mombasa, Kenya",
+      pickup_date: "10/18/2024",
+      from: "09:00",
+      to: "09:30",
+      contact_person: {
+        full_name: "Aisha Muthoni",
+        phone_number: 987654322,
+        email: "aisha@gmail.com",
+      },
+      id: "1a2b3c4d-5678-4e90-bb12-345678901234",
+    },
+    items: [
+      {
+        itemCategory: "Electronics",
+        packagingType: "Boxes",
+        itemDescription: "Laptop",
+        quantity: 5,
+        dimension: {
+          length: 1,
+          width: 0.5,
+          height: 0.3,
+        },
+        weight: 2,
+        totalWeight: 10,
+        dropOffLocations: [
+          {
+            multiple_dropoff_location: false,
+            dropoff_location: "Nairobi, Kenya",
+            delivery_date: "10/20/2024",
+            reciver: {
+              full_name: "David Kamau",
+              phone_number: 987654323,
+              email: "david@gmail.com",
+            },
+            quantity: 5,
+            id: "5f6e7d8c-1234-5678-90ab-cdef01234567",
+          },
+        ],
+      },
+    ],
+    driver: {
+      full_name: "Jane Smith",
+      contact_number: "987654321",
+    },
+    vehicle: {
+      vehicleNumber: "CD-5678",
+      vehicleType: "Van",
+    },
+    // status: "Driver Assigned",
+  },
+  {
+    id: 3,
+    shipmentNumber: "SHIP-003",
+    shipmentDate: "10/17/2024",
+    destination: "Addis Ababa, Ethiopia",
+    status: "Shipped",
+    pickupLocations: {
+      multiple_pickup_location: true,
+      pickup_location: "Kampala, Uganda",
+      pickup_date: "10/19/2024",
+      from: "14:00",
+      to: "14:30",
+      contact_person: {
+        full_name: "Moses Nsubuga",
+        phone_number: 987654324,
+        email: "moses@gmail.com",
+      },
+      id: "9a0b1c2d-5678-4e90-bb12-345678901234",
+    },
+    items: [
+      {
+        itemCategory: "Furniture",
+        packagingType: "Boxes",
+        itemDescription: "Office Desk",
+        quantity: 3,
+        dimension: {
+          length: 1.5,
+          width: 0.8,
+          height: 0.75,
+        },
+        weight: 25,
+        totalWeight: 75,
+        dropOffLocations: [
+          {
+            multiple_dropoff_location: false,
+            dropoff_location: "Addis Ababa, Ethiopia",
+            delivery_date: "10/25/2024",
+            reciver: {
+              full_name: "Selam Tesfaye",
+              phone_number: 987654325,
+              email: "selam@gmail.com",
+            },
+            quantity: 3,
+            id: "1e2f3g4h-1234-5678-90ab-cdef01234567",
+          },
+        ],
+      },
+      {
+        itemCategory: "Clothing",
+        packagingType: "Bags",
+        itemDescription: "Winter Coats",
+        quantity: 20,
+        dimension: {
+          length: 1,
+          width: 0.5,
+          height: 0.3,
+        },
+        weight: 1,
+        totalWeight: 20,
+        dropOffLocations: [
+          {
+            multiple_dropoff_location: false,
+            dropoff_location: "Addis Ababa, Ethiopia",
+            delivery_date: "10/25/2024",
+            reciver: {
+              full_name: "Selam Tesfaye",
+              phone_number: 987654325,
+              email: "selam@gmail.com",
+            },
+            quantity: 20,
+            id: "2e3f4g5h-1234-5678-90ab-cdef01234567",
+          },
+        ],
+      },
+    ],
+    driver: {
+      full_name: "Sammy Kibet",
+      contact_number: "123456780",
+    },
+    vehicle: {
+      vehicleNumber: "EF-1234",
+      vehicleType: "Truck",
+    },
+    // status: "Delivered",
+  },
+];
