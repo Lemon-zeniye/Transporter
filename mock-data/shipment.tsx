@@ -6,7 +6,7 @@ export const shipments = [
     pickupLocations: {
       multiple_pickup_location: false,
       pickup_location: "Yeka, Gulf, Southern Region, Papua New Guinea",
-      pickup_date: "10/17/2024",
+      pickup_date: "2024-10-30T23:59:59",
       from: "12:49",
       to: "12:52",
       contact_person: {
@@ -58,7 +58,7 @@ export const shipments = [
         id: "7ed740ca-9655-4fbc-befc-588384946fc2",
       },
       {
-        id: "ad705ba7-f358-4d83-a336-30fd219a73b8",
+        id: "ad705ba7-f358-4d83-a336- 30fd219a73b8",
         itemCategory: "Bulk Items",
         packagingType: "Pallets",
         itemDescription: "Item Two",
@@ -105,7 +105,7 @@ export const shipments = [
     pickupLocations: {
       multiple_pickup_location: true,
       pickup_location: "Mombasa, Kenya",
-      pickup_date: "10/18/2024",
+      pickup_date: "2024-11-12T23:59:59",
       from: "09:00",
       to: "09:30",
       contact_person: {
@@ -163,7 +163,7 @@ export const shipments = [
     pickupLocations: {
       multiple_pickup_location: true,
       pickup_location: "Kampala, Uganda",
-      pickup_date: "10/19/2024",
+      pickup_date: "2024-11-20T23:59:59",
       from: "14:00",
       to: "14:30",
       contact_person: {
