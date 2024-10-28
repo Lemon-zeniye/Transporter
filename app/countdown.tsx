@@ -55,10 +55,14 @@ const CountdownTimer: React.FC = () => {
 
   const renderOrder = ({ item }: { item: (typeof current_orders)[0] }) => (
     <View style={styles.orderItem}>
-      <Text>Start Time: {item.start_time}</Text>
-      <Text>End Time: {item.end_time}</Text>
-      <Text>Pick-Up Location: {item.pick_up_location}</Text>
-      <Text>Drop-Off Location: {item.drop_of_location}</Text>
+      <Text style={styles.orderText}>Start Time: {item.start_time}</Text>
+      <Text style={styles.orderText}>End Time: {item.end_time}</Text>
+      <Text style={styles.orderText}>
+        Pick-Up Location: {item.pick_up_location}
+      </Text>
+      <Text style={styles.orderText}>
+        Drop-Off Location: {item.drop_of_location}
+      </Text>
     </View>
   );
   return (
@@ -106,7 +110,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    marginTop: 100,
+    marginTop: 10,
     width: "80%",
   },
   ordersList: {
@@ -120,6 +124,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     width: "90%",
     alignSelf: "center",
+  },
+  orderText: {
+    fontSize: 18, // Increase font size here
+    color: "#333",
+    marginBottom: 5,
   },
 });
 
