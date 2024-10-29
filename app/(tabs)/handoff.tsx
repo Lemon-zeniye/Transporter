@@ -9,7 +9,7 @@ interface Order {
   drop_of_location: string;
   remark: string; 
 }
-s
+
 const Handoff: React.FC = () => {
   const [currentOrders, setCurrentOrders] = useState<Order[]>([
     {
