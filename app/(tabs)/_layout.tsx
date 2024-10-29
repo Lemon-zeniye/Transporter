@@ -46,7 +46,12 @@ function TabNavigator() {
         tabBarActiveTintColor: "#5363df", // Active color for icon and text
         tabBarInactiveTintColor: "#000", // Inactive color for icon and text
         tabBarLabelStyle: styles.tabBarLabel,
-        tabBarStyle: { backgroundColor: "#fff", paddingBottom: 5 },
+        tabBarStyle: {
+          backgroundColor: "#fff",
+          paddingBottom: 5,
+          height: 60, // Set a specific height
+          paddingTop: 5,
+        },
       })}
     >
       <Tab.Screen name="Order" component={Order} />
