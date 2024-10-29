@@ -34,7 +34,6 @@ export default function RootLayout() {
   }
 
   return (
-    // <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
@@ -46,6 +45,8 @@ export default function RootLayout() {
       <Stack.Screen name="(auth)" options={{ headerShown: true }} />
       <Stack.Screen name="+not-found" />
     </Stack>
-    // </ThemeProvider>
   );
+}
+function createBottomTabNavigator() {
+  throw new Error("Function not implemented.");
 }

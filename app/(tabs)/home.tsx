@@ -40,17 +40,6 @@ const Home = () => {
     </SafeAreaView>
   );
 };
-const IconExample = () => {
-  return (
-    <View style={styles.container}>
-      {/* Message Icon */}
-      <Icon name="message" size={30} color="#4CAF50" style={styles.icon} />
-
-      {/* Call Icon */}
-      <Icon name="call" size={30} color="#2196F3" style={styles.icon} />
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {

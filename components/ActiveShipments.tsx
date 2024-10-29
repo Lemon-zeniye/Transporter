@@ -79,7 +79,7 @@ const ActiveShipments = ({
         textStyle="font-pregular text-center"
         title="ACCEPT ORDER"
         handlePress={() => {
-          router.push("/(tabs)");
+          router.push("/(tabs)status");
         }}
         isLoading={false}
       />

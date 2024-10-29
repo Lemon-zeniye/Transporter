@@ -1,5 +1,14 @@
-import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import React, { useState } from "react";
+import { launchCamera } from "react-native-image-picker";
 
 interface Order {
   id: string;
@@ -7,7 +16,8 @@ interface Order {
   end_time: string;
   pick_up_location: string;
   drop_of_location: string;
-  remark: string; 
+  remark: string;
+  imageUri?: string; // Added for storing image URI
 }
 
 const Handoff: React.FC = () => {
@@ -18,9 +28,8 @@ const Handoff: React.FC = () => {
       end_time: "4:45 PM",
       pick_up_location: "Georgetown (DSE2) AMZL (6705 E Marginal Way South)",
       drop_of_location: "6705 East Marginal Way South",
-      remark: "", 
+      remark: "",
     },
-
   ]);
 
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({}); // Separate state for remarks
@@ -36,8 +45,27 @@ const Handoff: React.FC = () => {
       }
       return order;
     });
-    setCurrentOrders(updatedOrders); 
+    setCurrentOrders(updatedOrders);
     setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the specific remark after submission
+  };
+
+  const handleImageUpload = (orderId: string) => {
+    launchCamera({ mediaType: "photo" }, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled camera");
+      } else if (response.error) {
+        console.error("Camera error: ", response.error);
+      } else if (response.assets) {
+        const imageUri = response.assets[0].uri;
+        const updatedOrders = currentOrders.map((order) => {
+          if (order.id === orderId) {
+            return { ...order, imageUri }; // Store the image URI in the order
+          }
+          return order;
+        });
+        setCurrentOrders(updatedOrders);
+      }
+    });
   };
 
   const renderOrder = ({ item }: { item: Order }) => (
@@ -54,17 +82,26 @@ const Handoff: React.FC = () => {
         style={styles.input}
         placeholder="Enter remark...."
         value={remarks[item.id] || ""} // Bind the input to the specific order remark
-        onChangeText={(text) => handleRemarkChange(item.id, text)} 
+        onChangeText={(text) => handleRemarkChange(item.id, text)}
       />
       <TouchableOpacity
         style={styles.submitButton}
-        onPress={() => submitRemark(item.id)} 
+        onPress={() => submitRemark(item.id)}
         disabled={!remarks[item.id]} // Disable button if no remark
       >
         <Text style={styles.buttonText}>Remark</Text>
       </TouchableOpacity>
       {item.remark ? (
-        <Text style={styles.remarkText}>Remark: {item.remark}</Text>
+        <Text style={styles.remarkText}> {item.remark}</Text>
+      ) : null}
+      <TouchableOpacity
+        style={styles.imageButton}
+        onPress={() => handleImageUpload(item.id)}
+      >
+        <Text style={styles.buttonText}>Take Photo</Text>
+      </TouchableOpacity>
+      {item.imageUri ? (
+        <Image source={{ uri: item.imageUri }} style={styles.image} />
       ) : null}
     </View>
   );
@@ -100,11 +137,11 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 8,
     borderRadius: 10,
-    elevation: 2, 
-    shadowColor: "#000", 
-    shadowOffset: { width: 0, height: 1 }, 
-    shadowOpacity: 0.2, 
-    shadowRadius: 1, 
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
     width: "90%",
     alignSelf: "center",
   },
@@ -117,14 +154,21 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 20, 
+    borderRadius: 20,
     marginBottom: 10,
     paddingHorizontal: 15,
     backgroundColor: "#f0f0f0",
   },
   submitButton: {
     backgroundColor: "#007BFF",
-    borderRadius: 20, 
+    borderRadius: 20,
+    paddingVertical: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  imageButton: {
+    backgroundColor: "#28A745",
+    borderRadius: 20,
     paddingVertical: 10,
     alignItems: "center",
     marginBottom: 10,
@@ -138,5 +182,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#007BFF",
     marginTop: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+    borderRadius: 10,
   },
 });
