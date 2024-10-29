@@ -1,7 +1,6 @@
 import { View, Text, ScrollView, Image } from "react-native";
-import  { useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { images } from "@/constants";
 import { StatusBar } from "expo-status-bar";
 import FormField from "@/components/FormField";
 import CustomeButton from "@/components/CustomeButton";

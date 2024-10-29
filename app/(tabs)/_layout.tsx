@@ -1,122 +1,67 @@
-// 'use cient'
 import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Drawer } from "expo-router/drawer";
-import { Image, StyleSheet, Text, View } from "react-native";
-import {
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from "@react-navigation/drawer";
-import { router, usePathname } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { images } from "@/constants";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet } from "react-native";
+import { usePathname } from "expo-router";
+import HomeScreen from "./home"; // Import your screens
+import ProfileScreen from "./profile";
+import Handoff from "./handoff";
 
-const CustomDrawerContent = (props: any) => {
-  const { top, bottom } = useSafeAreaInsets();
-  const pathname = usePathname();
-  return (
-    <View style={{ flex: 1 }}>
-      <DrawerContentScrollView
-        {...props}
-        // contentContainerStyle={{ backgroundColor: "#dde3fe" }}
-      >
-        <View className="justify-center items-center mt-10">
-          <Image
-            source={images.profile}
-            className="w-28 h-28 rounded-full"
-            resizeMode="contain"
-          />
-          <Text>Gemechu</Text>
-        </View>
-
-        {/* to list all the files on the drawer */}
-        {/* <DrawerItemList {...props} /> */}
-
-        {/* define all route  */}
-
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Ionicons
-              name="home-outline"
-              size={size}
-              color={pathname === "/home" ? "#fff" : "#000"}
-            />
-          )}
-          label="Home"
-          labelStyle={[
-            labelStyle.navbarItemLable,
-            { color: pathname == "/home" ? "#fff" : "#000" },
-          ]}
-          style={{ backgroundColor: pathname == "/home" ? "#333" : "#fff" }}
-          onPress={() => router.push("/home")}
-        />
-
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          )}
-          label={"Logout"}
-          labelStyle={labelStyle.navbarItemLable}
-          onPress={() => router.push("/")}
-        />
-      </DrawerContentScrollView>
-
-      <View className={`border-t border-t-gray-100 p-2 pb-5`}>
-        <Text>Footer</Text>
-      </View>
-    </View>
-  );
+// Define types for Tab Navigator
+type TabParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Handoff: undefined;
+  Active: undefined;
 };
 
-export default function TabLayout() {
+const Tab = createBottomTabNavigator<TabParamList>();
+
+function TabNavigator() {
+  const pathname = usePathname();
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* custome drawer  */}
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap;
+          if (route.name === "Home") {
+            iconName = "home-outline";
+          } else if (route.name === "Handoff") {
+            iconName = "swap-horizontal-outline"; // Choose an icon for Handoff
+          } else if (route.name === "Profile") {
+            iconName = "person-outline";
+          }
 
-      <Drawer drawerContent={CustomDrawerContent} />
-      {/* default drawer */}
-
-      {/* <Drawer
-        screenOptions={{
-          drawerHideStatusBarOnOpen: true,
-          drawerActiveBackgroundColor: "#5363df",
-          drawerActiveTintColor: "#fff",
-          drawerLabelStyle: { marginLeft: 2 },
-        }}
-      >
-      <Drawer.Screen
-          name="home"
-          options={{
-            drawerLabel: "Home",
-            title: "Home",
-            headerShown: true,
-            headerTitleAlign: "center",
-            // headerStyle: {
-            //   backgroundColor: "blue",
-            // },
-            // headerTitleStyle: {
-            //   fontWeight: "bold",
-            //   fontSize: 24,
-            //   color: "#fff",
-            // },
-          }}
-        />
-        <Drawer.Screen
-          name="profile"
-          options={{
-            drawerLabel: "Profile",
-            title: "profile",
-          }}
-        />
-      </Drawer> */}
-    </GestureHandlerRootView>
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#5363df",
+        tabBarInactiveTintColor: "#000",
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarStyle: { backgroundColor: "#fff", paddingBottom: 5 },
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Handoff" component={Handoff} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }
 
-const labelStyle = StyleSheet.create({
-  navbarItemLable: {
-    marginLeft: -20,
+const App: React.FC = () => {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <TabNavigator />
+    </GestureHandlerRootView>
+  );
+};
+
+export default App;
+
+const styles = StyleSheet.create({
+  tabBarLabel: {
+    fontSize: 12,
+    marginBottom: 3,
   },
 });
