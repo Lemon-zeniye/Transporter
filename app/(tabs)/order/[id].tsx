@@ -17,54 +17,58 @@ const OrderDetail = () => {
   return (
     <>
       <ScrollView style={styles.container}>
-        <Text style={styles.header}>Shipment Details</Text>
+        <View style={styles.pickup}>
+          <Text style={styles.header}>Pickup Location</Text>
+          <Text style={styles.label}>Location:</Text>
+          <Text style={styles.value}>
+            {shipment.pickupLocations.pickup_location}
+          </Text>
+          <Text style={styles.label}>Pickup Date:</Text>
+          <Text style={styles.value}>
+            {shipment.pickupLocations.pickup_date}
+          </Text>
 
-        <Text style={styles.label}>Shipment Number:</Text>
-        <Text style={styles.value}>{shipment.shipmentNumber}</Text>
+          <View style={styles.contactMain}>
+            <View>
+              <Text style={styles.label}>Contact Person:</Text>
+              <Text style={styles.value}>
+                {shipment.pickupLocations.contact_person.full_name}
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.label}>Contact Phone:</Text>
+              <Text style={styles.value}>
+                {shipment.pickupLocations.contact_person.phone_number}
+              </Text>
+            </View>
+          </View>
+        </View>
 
-        <Text style={styles.label}>Shipment Date:</Text>
-        <Text style={styles.value}>{shipment.shipmentDate}</Text>
-
-        <Text style={styles.header}>Pickup Location</Text>
-        <Text style={styles.label}>Location:</Text>
-        <Text style={styles.value}>
-          {shipment.pickupLocations.pickup_location}
-        </Text>
-        <Text style={styles.label}>Pickup Date:</Text>
-        <Text style={styles.value}>{shipment.pickupLocations.pickup_date}</Text>
-        <Text style={styles.label}>Contact Person:</Text>
-        <Text style={styles.value}>
-          {shipment.pickupLocations.contact_person.full_name}
-        </Text>
-        <Text style={styles.label}>Contact Phone:</Text>
-        <Text style={styles.value}>
-          {shipment.pickupLocations.contact_person.phone_number}
-        </Text>
-
-        <Text style={styles.header}>Items</Text>
         {shipment.items.map((item, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <Text style={styles.label}>Item Description:</Text>
-            <Text style={styles.value}>{item.itemDescription}</Text>
-            <Text style={styles.label}>Category:</Text>
-            <Text style={styles.value}>{item.itemCategory}</Text>
-            <Text style={styles.label}>Packaging Type:</Text>
-            <Text style={styles.value}>{item.packagingType}</Text>
-            <Text style={styles.label}>Quantity:</Text>
-            <Text style={styles.value}>{item.quantity}</Text>
-            <Text style={styles.label}>Weight:</Text>
-            <Text style={styles.value}>{item.weight} kg</Text>
-            <Text style={styles.label}>Total Weight:</Text>
-            <Text style={styles.value}>{item.totalWeight} kg</Text>
-            <Text style={styles.label}>Dimensions:</Text>
-            <Text style={styles.value}>
-              {item.dimension.length} x {item.dimension.width} x{" "}
-              {item.dimension.height} m
-            </Text>
+          <View style={styles.itemContainer}>
+            <View key={index}>
+              <Text style={styles.header}>Items</Text>
+              <Text style={styles.label}>Item Description:</Text>
+              <Text style={styles.value}>{item.itemDescription}</Text>
+              <Text style={styles.label}>Category:</Text>
+              <Text style={styles.value}>{item.itemCategory}</Text>
+              <Text style={styles.label}>Packaging Type:</Text>
+              <Text style={styles.value}>{item.packagingType}</Text>
+              <Text style={styles.label}>Quantity:</Text>
+              <Text style={styles.value}>{item.quantity}</Text>
+              <Text style={styles.label}>Total Weight:</Text>
+              <Text style={styles.value}>{item.totalWeight} kg</Text>
+              <Text style={styles.label}>Dimensions:</Text>
+              <Text style={styles.value}>
+                {item.dimension.length} x {item.dimension.width} x{" "}
+                {item.dimension.height} m
+              </Text>
+            </View>
 
-            <Text style={styles.header}>Drop Off Locations</Text>
             {item.dropOffLocations.map((dropOff, dropOffIndex) => (
-              <View key={dropOffIndex}>
+              <View key={dropOffIndex} style={styles.dropoff}>
+                <Text style={styles.header}>Drop Off Location</Text>
+
                 <Text style={styles.label}>Dropoff Location:</Text>
                 <Text style={styles.value}>{dropOff.dropoff_location}</Text>
                 <Text style={styles.label}>Delivery Date:</Text>
@@ -79,21 +83,6 @@ const OrderDetail = () => {
             ))}
           </View>
         ))}
-
-        <Text style={styles.header}>Driver Details</Text>
-        <Text style={styles.label}>Driver Name:</Text>
-        <Text style={styles.value}>{shipment.driver.full_name}</Text>
-        <Text style={styles.label}>Contact Number:</Text>
-        <Text style={styles.value}>{shipment.driver.contact_number}</Text>
-
-        <Text style={styles.header}>Vehicle Details</Text>
-        <Text style={styles.label}>Vehicle Number:</Text>
-        <Text style={styles.value}>{shipment.vehicle.vehicleNumber}</Text>
-        <Text style={styles.label}>Vehicle Type:</Text>
-        <Text style={styles.value}>{shipment.vehicle.vehicleType}</Text>
-
-        <Text style={styles.header}>Status:</Text>
-        <Text style={styles.value}>{shipment.status}</Text>
       </ScrollView>
 
       <CustomeButton
@@ -134,11 +123,27 @@ const styles = StyleSheet.create({
   value: {
     marginBottom: 20,
   },
-  itemContainer: {
-    marginBottom: 16,
-    padding: 8,
+  pickup: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 4,
+    borderColor: "grey",
+    padding: 4,
+    borderRadius: 20,
+  },
+  itemContainer: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: "grey",
+    padding: 4,
+    borderRadius: 20,
+  },
+  dropoff: {
+    marginLeft: 38,
+  },
+  contactMain: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 100,
   },
 });

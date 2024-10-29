@@ -1,4 +1,5 @@
 import { shipments } from "@/mock-data/shipment";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, FlatList } from "react-native";
 
@@ -53,6 +54,10 @@ const CountdownTimer: React.FC = () => {
     }, 1000);
   };
 
+  const handoff = () => {
+    router.push("/handoff");
+  };
+
   const renderOrder = ({ item }: { item: (typeof current_orders)[0] }) => (
     <View style={styles.orderItem}>
       <Text style={styles.orderText}>Start Time: {item.start_time}</Text>
@@ -89,6 +94,10 @@ const CountdownTimer: React.FC = () => {
       ) : (
         <Text>Event has started!</Text>
       )}
+
+      <View style={styles.handoffButton}>
+        <Button title="Handoff" onPress={handoff} />
+      </View>
     </View>
   );
 };
@@ -130,6 +139,7 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 5,
   },
+  handoffButton: {},
 });
 
 export default CountdownTimer;
