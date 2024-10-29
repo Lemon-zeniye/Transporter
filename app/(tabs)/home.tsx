@@ -31,8 +31,10 @@ const Home = () => {
         ListEmptyComponent={() => <EmptyList />}
         contentContainerStyle={{
           padding: 20,
-          margin: 1,
-          borderWidth: 1,
+          margin: 10,
+          borderWidth: 2,
+          borderRadius: 10,
+          backgroundColor: "#ecf0f1",
         }}
       />
     </SafeAreaView>
