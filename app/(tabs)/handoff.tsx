@@ -9,7 +9,7 @@ interface Order {
   drop_of_location: string;
   remark: string; 
 }
-
+s
 const Handoff: React.FC = () => {
   const [currentOrders, setCurrentOrders] = useState<Order[]>([
     {
@@ -20,6 +20,7 @@ const Handoff: React.FC = () => {
       drop_of_location: "6705 East Marginal Way South",
       remark: "", 
     },
+
   ]);
 
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({}); // Separate state for remarks
@@ -51,7 +52,7 @@ const Handoff: React.FC = () => {
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter remark..."
+        placeholder="Enter remark...."
         value={remarks[item.id] || ""} // Bind the input to the specific order remark
         onChangeText={(text) => handleRemarkChange(item.id, text)} 
       />
