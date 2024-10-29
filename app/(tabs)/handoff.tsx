@@ -1,14 +1,6 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import React, { useState } from "react";
-import { launchCamera } from "react-native-image-picker";
+import SignatureCapture from 'react-native-signature-canvas';
 
 interface Order {
   id: string;
@@ -16,8 +8,7 @@ interface Order {
   end_time: string;
   pick_up_location: string;
   drop_of_location: string;
-  remark: string;
-  imageUri?: string; // Added for storing image URI
+  remark: string; 
 }
 
 const Handoff: React.FC = () => {
@@ -28,44 +19,36 @@ const Handoff: React.FC = () => {
       end_time: "4:45 PM",
       pick_up_location: "Georgetown (DSE2) AMZL (6705 E Marginal Way South)",
       drop_of_location: "6705 East Marginal Way South",
-      remark: "",
+      remark: "", 
     },
   ]);
 
-  const [remarks, setRemarks] = useState<{ [key: string]: string }>({}); // Separate state for remarks
+  const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
+  const [signature, setSignature] = useState<string | null>(null);
+  const [showSignature, setShowSignature] = useState(false);
 
   const handleRemarkChange = (orderId: string, text: string) => {
-    setRemarks((prev) => ({ ...prev, [orderId]: text })); // Update the specific order remark
+    setRemarks((prev) => ({ ...prev, [orderId]: text }));
   };
 
   const submitRemark = (orderId: string) => {
     const updatedOrders = currentOrders.map((order) => {
       if (order.id === orderId) {
-        return { ...order, remark: remarks[orderId] || "" }; // Use the remark from the state
+        return { ...order, remark: remarks[orderId] || "" };
       }
       return order;
     });
     setCurrentOrders(updatedOrders);
-    setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the specific remark after submission
+    setRemarks((prev) => ({ ...prev, [orderId]: "" }));
   };
 
-  const handleImageUpload = (orderId: string) => {
-    launchCamera({ mediaType: "photo" }, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled camera");
-      } else if (response.error) {
-        console.error("Camera error: ", response.error);
-      } else if (response.assets) {
-        const imageUri = response.assets[0].uri;
-        const updatedOrders = currentOrders.map((order) => {
-          if (order.id === orderId) {
-            return { ...order, imageUri }; // Store the image URI in the order
-          }
-          return order;
-        });
-        setCurrentOrders(updatedOrders);
-      }
-    });
+  const handleSignature = (signature: string) => {
+    setSignature(signature);
+    setShowSignature(false);
+  };
+
+  const clearSignature = () => {
+    setSignature(null);
   };
 
   const renderOrder = ({ item }: { item: Order }) => (
@@ -80,29 +63,48 @@ const Handoff: React.FC = () => {
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter remark...."
-        value={remarks[item.id] || ""} // Bind the input to the specific order remark
+        placeholder="Enter remark..."
+        placeholderTextColor="#888"
+        value={remarks[item.id] || ""}
         onChangeText={(text) => handleRemarkChange(item.id, text)}
       />
       <TouchableOpacity
-        style={styles.submitButton}
+        style={[styles.submitButton, { opacity: remarks[item.id] ? 1 : 0.5 }]}
         onPress={() => submitRemark(item.id)}
-        disabled={!remarks[item.id]} // Disable button if no remark
+        disabled={!remarks[item.id]}
       >
-        <Text style={styles.buttonText}>Remark</Text>
+        <Text style={styles.buttonText}>Submit Remark</Text>
       </TouchableOpacity>
       {item.remark ? (
-        <Text style={styles.remarkText}> {item.remark}</Text>
+        <Text style={styles.remarkText}>Remark: {item.remark}</Text>
       ) : null}
+
+      {/* Signature Button */}
       <TouchableOpacity
-        style={styles.imageButton}
-        onPress={() => handleImageUpload(item.id)}
+        style={styles.signatureButton}
+        onPress={() => setShowSignature(true)}
       >
-        <Text style={styles.buttonText}>Take Photo</Text>
+        <Text style={styles.buttonText}>Sign Here</Text>
       </TouchableOpacity>
-      {item.imageUri ? (
-        <Image source={{ uri: item.imageUri }} style={styles.image} />
-      ) : null}
+
+      {/* Signature Canvas */}
+      {showSignature && (
+        <SignatureCapture
+          style={styles.signature}
+          onOK={handleSignature}
+          backgroundColor="white"
+        />
+      )}
+
+      {signature && (
+        <View style={styles.signatureContainer}>
+          <Text style={styles.signatureLabel}>Signature:</Text>
+          <Image source={{ uri: signature }} style={styles.signatureImage} />
+          <TouchableOpacity onPress={clearSignature}>
+            <Text style={styles.clearButtonText}>Clear Signature</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 
@@ -135,13 +137,13 @@ const styles = StyleSheet.create({
   orderItem: {
     backgroundColor: "#ffffff",
     padding: 20,
-    marginVertical: 8,
+    marginVertical: 10,
     borderRadius: 10,
-    elevation: 2,
+    elevation: 3,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
     width: "90%",
     alignSelf: "center",
   },
@@ -154,21 +156,14 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 25,
     marginBottom: 10,
     paddingHorizontal: 15,
     backgroundColor: "#f0f0f0",
   },
   submitButton: {
     backgroundColor: "#007BFF",
-    borderRadius: 20,
-    paddingVertical: 10,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  imageButton: {
-    backgroundColor: "#28A745",
-    borderRadius: 20,
+    borderRadius: 25,
     paddingVertical: 10,
     alignItems: "center",
     marginBottom: 10,
@@ -183,10 +178,40 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     marginTop: 10,
   },
-  image: {
-    width: 100,
-    height: 100,
+  signature: {
+    width: '100%',
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#ccc',
     marginTop: 10,
     borderRadius: 10,
+  },
+  signatureContainer: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  signatureImage: {
+    width: 100,
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  clearButtonText: {
+    color: 'red',
+    textDecorationLine: 'underline',
+  },
+  signatureButton: {
+    backgroundColor: "#007BFF",
+    borderRadius: 25,
+    paddingVertical: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  signatureLabel: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#333",
   },
 });
