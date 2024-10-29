@@ -61,7 +61,7 @@ const Handoff: React.FC = () => {
         onPress={() => submitRemark(item.id)} 
         disabled={!remarks[item.id]} // Disable button if no remark
       >
-        <Text style={styles.buttonText}>Submit Remark</Text>
+        <Text style={styles.buttonText}>Remark</Text>
       </TouchableOpacity>
       {item.remark ? (
         <Text style={styles.remarkText}>Remark: {item.remark}</Text>
