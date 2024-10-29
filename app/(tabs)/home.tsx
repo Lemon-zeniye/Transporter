@@ -1,4 +1,5 @@
 import { FlatList } from "react-native";
+import { View, StyleSheet } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,12 +31,36 @@ const Home = () => {
         ListEmptyComponent={() => <EmptyList />}
         contentContainerStyle={{
           padding: 20,
-          margin: 1,
-          borderWidth: 1,
+          margin: 10,
+          borderWidth: 2,
+          borderRadius: 10,
+          backgroundColor: "#ecf0f1",
         }}
       />
     </SafeAreaView>
   );
 };
+const IconExample = () => {
+  return (
+    <View style={styles.container}>
+      {/* Message Icon */}
+      <Icon name="message" size={30} color="#4CAF50" style={styles.icon} />
+
+      {/* Call Icon */}
+      <Icon name="call" size={30} color="#2196F3" style={styles.icon} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    margin: 10,
+  },
+});
 
 export default Home;

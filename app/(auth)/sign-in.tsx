@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, Image } from "react-native";
-import  { useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { images } from "@/constants";
 import { StatusBar } from "expo-status-bar";
 import FormField from "@/components/FormField";
-import CustomeButton from "@/components/CustomeButton";
+import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import React from "react";
 
@@ -50,7 +49,7 @@ const SignIn = () => {
               otherStyles="mt-7"
             />
           </View>
-          <CustomeButton
+          <CustomButton
             buttonStyle="bg-secondary mt-7 w-full"
             textStyle="text-primary"
             title="Sign In"
