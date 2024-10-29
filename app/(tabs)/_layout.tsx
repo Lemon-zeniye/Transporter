@@ -35,15 +35,12 @@ function TabNavigator() {
         tabBarActiveTintColor: "#5363df",
         tabBarInactiveTintColor: "#000",
         tabBarLabelStyle: styles.tabBarLabel,
-<<<<<<< HEAD
         tabBarStyle: {
           backgroundColor: "#fff",
           paddingBottom: 5,
           height: 60, // Set a specific height
           paddingTop: 5,
         },
-=======
->>>>>>> 1e0e229f05b946537bb868ee8aab648cda8a7966
       })}
     >
       <Tab.Screen name="Order" component={Order} />
