@@ -1,119 +1,167 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import React, { useState } from "react";
-import { launchCamera } from "react-native-image-picker";
-
-interface Order {
-  id: string;
-  start_time: string;
-  end_time: string;
-  pick_up_location: string;
-  drop_of_location: string;
-  remark: string;
-  imageUri?: string; // Added for storing image URI
-}
+import SignatureCapture from 'react-native-signature-canvas';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Handoff: React.FC = () => {
-  const [currentOrders, setCurrentOrders] = useState<Order[]>([
-    {
-      id: "1",
-      start_time: "1:45 PM",
-      end_time: "4:45 PM",
-      pick_up_location: "Georgetown (DSE2) AMZL (6705 E Marginal Way South)",
-      drop_of_location: "6705 East Marginal Way South",
-      remark: "",
-    },
-  ]);
+  const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
+  const [signatures, setSignatures] = useState<{ [key: string]: string | null }>({});
+  const [showSignature, setShowSignature] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [submittedRemarks, setSubmittedRemarks] = useState<{ orderId: string; remark: string }[]>([]);
+  const [submittedSignatures, setSubmittedSignatures] = useState<{ orderId: string; signature: string | null }[]>([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [remarks, setRemarks] = useState<{ [key: string]: string }>({}); // Separate state for remarks
-
-  const handleRemarkChange = (orderId: string, text: string) => {
-    setRemarks((prev) => ({ ...prev, [orderId]: text })); // Update the specific order remark
+  const handleInputChange = (orderId: string, remark: string) => {
+    setRemarks((prev) => ({ ...prev, [orderId]: remark }));
   };
 
   const submitRemark = (orderId: string) => {
-    const updatedOrders = currentOrders.map((order) => {
-      if (order.id === orderId) {
-        return { ...order, remark: remarks[orderId] || "" }; // Use the remark from the state
-      }
-      return order;
-    });
-    setCurrentOrders(updatedOrders);
-    setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the specific remark after submission
+    const newRemark = remarks[orderId] || "";
+    if (newRemark) {
+      setSubmittedRemarks((prev) => [
+        ...prev,
+        { orderId, remark: newRemark },
+      ]);
+      setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the remark input after submission
+    }
   };
 
-  const handleImageUpload = (orderId: string) => {
-    launchCamera({ mediaType: "photo" }, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled camera");
-      } else if (response.error) {
-        console.error("Camera error: ", response.error);
-      } else if (response.assets) {
-        const imageUri = response.assets[0].uri;
-        const updatedOrders = currentOrders.map((order) => {
-          if (order.id === orderId) {
-            return { ...order, imageUri }; // Store the image URI in the order
-          }
-          return order;
-        });
-        setCurrentOrders(updatedOrders);
-      }
-    });
+  const handleSignature = (signature: string) => {
+    if (selectedOrderId) {
+      setSignatures((prev) => ({ ...prev, [selectedOrderId]: signature }));
+      setSubmittedSignatures((prev) => [
+        ...prev,
+        { orderId: selectedOrderId, signature },
+      ]);
+      setShowSignature(false);
+    }
   };
 
-  const renderOrder = ({ item }: { item: Order }) => (
+  const clearSignature = () => {
+    if (selectedOrderId) {
+      setSignatures((prev) => ({ ...prev, [selectedOrderId]: null }));
+    }
+  };
+
+  const handleSubmitAll = () => {
+    Alert.alert(
+      "Confirm Submission",
+      "Are you sure you want to submit all the data?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            console.log("Submitting all remarks and signatures", {
+              submittedRemarks,
+              submittedSignatures,
+            });
+
+            setSubmittedRemarks([]);
+            setSubmittedSignatures([]);
+            setRemarks({});
+            setSignatures({});
+            setIsSubmitted(true);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const takePicture = () => {
+    // Add camera logic here
+    console.log("Taking picture...");
+  };
+
+  const renderOrder = ({ item }: { item: { id: string } }) => (
     <View style={styles.orderItem}>
-      <Text style={styles.orderText}>Start Time: {item.start_time}</Text>
-      <Text style={styles.orderText}>End Time: {item.end_time}</Text>
-      <Text style={styles.orderText}>
-        Pick-Up Location: {item.pick_up_location}
-      </Text>
-      <Text style={styles.orderText}>
-        Drop-Off Location: {item.drop_of_location}
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter remark...."
-        value={remarks[item.id] || ""} // Bind the input to the specific order remark
-        onChangeText={(text) => handleRemarkChange(item.id, text)}
-      />
+      <View style={styles.inputSection}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter remark..."
+          placeholderTextColor="#888"
+          value={remarks[item.id] || ""}
+          onChangeText={(text) => handleInputChange(item.id, text)}
+        />
+      </View>
+
       <TouchableOpacity
-        style={styles.submitButton}
+        style={styles.submitRemarkButton}
         onPress={() => submitRemark(item.id)}
-        disabled={!remarks[item.id]} // Disable button if no remark
+        disabled={!remarks[item.id]}
       >
         <Text style={styles.buttonText}>Submit Remark</Text>
       </TouchableOpacity>
-      {item.remark ? (
-        <Text style={styles.remarkText}> {item.remark}</Text>
-      ) : null}
+
       <TouchableOpacity
-        style={styles.imageButton}
-        onPress={() => handleImageUpload(item.id)}
+        style={styles.signatureButton}
+        onPress={() => {
+          setShowSignature(true);
+          setSelectedOrderId(item.id);
+        }}
       >
-        <Text style={styles.buttonText}>Take Photo</Text>
+        <Text style={styles.buttonText}>Sign Here</Text>
       </TouchableOpacity>
-      {item.imageUri ? (
-        <Image source={{ uri: item.imageUri }} style={styles.image} />
-      ) : null}
+
+      <TouchableOpacity
+        style={styles.cameraButton}
+        onPress={takePicture}
+      >
+        <Icon name="camera" size={20} color="#ffffff" />
+        <Text style={styles.buttonText}>Take Picture</Text>
+      </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={currentOrders}
+        data={[{ id: "1" }]} // Placeholder for a single order
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         style={styles.ordersList}
       />
+
+      <Modal visible={showSignature} transparent={true}>
+        <View style={styles.modalContainer}>
+          <SignatureCapture
+            style={styles.signature}
+            onOK={handleSignature}
+            backgroundColor="white"
+          />
+          <TouchableOpacity style={styles.clearButton} onPress={clearSignature}>
+            <Text style={styles.clearButtonText}>Clear Signature</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.modalButton} onPress={() => setShowSignature(false)}>
+            <Text style={styles.buttonText}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <View style={styles.submissionContainer}>
+        {submittedRemarks.map((remark) => (
+          <View key={remark.orderId} style={styles.submissionItem}>
+            <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
+            {submittedSignatures.find(sig => sig.orderId === remark.orderId) && (
+              <View style={styles.signatureContainer}>
+                <Text style={styles.signatureLabel}>Signature:</Text>
+                <Image source={{ uri: signatures[remark.orderId] || "" }} style={styles.signatureImage} />
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+
+      <TouchableOpacity style={styles.submitAllButton} onPress={handleSubmitAll}>
+        <Text style={styles.buttonText}>Submit All</Text>
+      </TouchableOpacity>
+
+      {isSubmitted && <Text style={styles.submissionMessage}>All data submitted successfully!</Text>}
     </View>
   );
 };
@@ -122,11 +170,9 @@ export default Handoff;
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f0f4f8",
   },
   ordersList: {
     width: "100%",
@@ -135,58 +181,129 @@ const styles = StyleSheet.create({
   orderItem: {
     backgroundColor: "#ffffff",
     padding: 20,
-    marginVertical: 8,
+    marginVertical: 10,
     borderRadius: 10,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    width: "90%",
-    alignSelf: "center",
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  orderText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
+  inputSection: {
+    marginBottom: 10,
   },
   input: {
     height: 40,
-    borderColor: "#ccc",
+    borderColor: "#d1d9e0",
     borderWidth: 1,
-    borderRadius: 20,
-    marginBottom: 10,
+    borderRadius: 5,
     paddingHorizontal: 15,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#f9fbfd",
   },
-  submitButton: {
-    backgroundColor: "#007BFF",
-    borderRadius: 20,
-    paddingVertical: 10,
+  submitRemarkButton: {
+    backgroundColor: "#1f78b4",
+    borderRadius: 5,
+    paddingVertical: 8,
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  imageButton: {
-    backgroundColor: "#28A745",
-    borderRadius: 20,
-    paddingVertical: 10,
+  signatureButton: {
+    backgroundColor: "#1f78b4",
+    borderRadius: 5,
+    paddingVertical: 8,
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
+  },
+  cameraButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: "#ffa726",
+    borderRadius: 5,
+    paddingVertical: 8,
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  submitAllButton: {
+    backgroundColor: "#1f78b4",
+    borderRadius: 5,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 20,
   },
   buttonText: {
     color: "#ffffff",
-    fontWeight: "bold",
+    fontWeight: "600",
     fontSize: 16,
+    marginLeft: 5,
   },
-  remarkText: {
-    fontSize: 14,
-    color: "#007BFF",
-    marginTop: 10,
-  },
-  image: {
-    width: 100,
-    height: 100,
+  signature: {
+    width: '100%',
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#d1d9e0',
     marginTop: 10,
     borderRadius: 10,
+  },
+  submissionContainer: {
+    marginTop: 20,
+    backgroundColor: "#ffffff",
+    padding: 15,
+    borderRadius: 10,
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  submissionItem: {
+    marginBottom: 10,
+  },
+  submissionText: {
+    fontSize: 14,
+    color: "#455a64",
+  },
+  signatureContainer: {
+    marginTop: 5,
+    alignItems: "center",
+  },
+  signatureImage: {
+    width: 100,
+    height: 50,
+    borderColor: '#d1d9e0',
+    borderWidth: 1,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  clearButtonText: {
+    color: '#ff5252',
+    textDecorationLine: 'underline',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modalButton: {
+    backgroundColor: "#1f78b4",
+    borderRadius: 5,
+    padding: 10,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  submissionMessage: {
+    color: "#2e7d32",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 15,
+  },
+  clearButton: {
+    marginVertical: 8,
+  },
+  signatureLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: "#455a64",
   },
 });

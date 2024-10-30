@@ -2,8 +2,9 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 
 import { ActiveOrders } from "@/shared/models/shipmnet-orders.model";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { shipments } from "@/mock-data/shipment";
+import { useNavigation } from "@react-navigation/native";
 
 import { FontAwesome } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -18,7 +19,18 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
   dropOfLocation,
   setDropOfLocation,
 }) => {
+<<<<<<< HEAD
   const [open, setOpen] = React.useState<boolean>(false); // Controls dropdown visibility
+=======
+  const [isCardVisible, setIsCardVisible] = useState(false);
+
+  const toggleCardVisibility = () => {
+    setIsCardVisible(!isCardVisible);
+  };
+
+  const navigation = useNavigation();
+
+>>>>>>> bcb9c114048950068e16d30db1a97487cc092b8e
   const shipment = shipments[0];
   return (
     <View style={{ padding: 16 }}>
