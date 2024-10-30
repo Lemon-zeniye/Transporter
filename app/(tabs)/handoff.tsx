@@ -1,108 +1,105 @@
-import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Modal } from "react-native";
+import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Modal, Alert } from "react-native";
 import React, { useState } from "react";
 import SignatureCapture from 'react-native-signature-canvas';
 
-interface Order {
-  id: string;
-  start_time: string;
-  end_time: string;
-  pick_up_location: string;
-  drop_of_location: string;
-  remark: string; 
-  note: string;
-}
-
 const Handoff: React.FC = () => {
-  const [currentOrders, setCurrentOrders] = useState<Order[]>([
-    {
-      id: "1",
-      start_time: "1:45 PM",
-      end_time: "4:45 PM",
-      pick_up_location: "Georgetown (DSE2) AMZL (6705 E Marginal Way South)",
-      drop_of_location: "6705 East Marginal Way South",
-      remark: "", 
-      note: "",
-    },
-  ]);
-
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
-  const [notes, setNotes] = useState<{ [key: string]: string }>({});
-  const [signature, setSignature] = useState<string | null>(null);
+  const [signatures, setSignatures] = useState<{ [key: string]: string | null }>({});
   const [showSignature, setShowSignature] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [submittedRemarks, setSubmittedRemarks] = useState<{ orderId: string; remark: string }[]>([]);
+  const [submittedSignatures, setSubmittedSignatures] = useState<{ orderId: string; signature: string | null }[]>([]);
+  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track overall submission
 
-  const handleInputChange = (orderId: string, remark: string, note: string) => {
+  const handleInputChange = (orderId: string, remark: string) => {
     setRemarks((prev) => ({ ...prev, [orderId]: remark }));
-    setNotes((prev) => ({ ...prev, [orderId]: note }));
   };
 
-  const submitInputs = (orderId: string) => {
-    const updatedOrders = currentOrders.map((order) => {
-      if (order.id === orderId) {
-        return {
-          ...order,
-          remark: remarks[orderId] || "",
-          note: notes[orderId] || ""
-        };
-      }
-      return order;
-    });
-    setCurrentOrders(updatedOrders);
-    setRemarks((prev) => ({ ...prev, [orderId]: "" }));
-    setNotes((prev) => ({ ...prev, [orderId]: "" }));
+  const submitRemark = (orderId: string) => {
+    const newRemark = remarks[orderId] || "";
+    if (newRemark) {
+      setSubmittedRemarks((prev) => [
+        ...prev,
+        { orderId, remark: newRemark },
+      ]);
+      setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the remark input after submission
+    }
   };
 
   const handleSignature = (signature: string) => {
-    setSignature(signature);
-    setShowSignature(false);
+    if (selectedOrderId) {
+      setSignatures((prev) => ({ ...prev, [selectedOrderId]: signature }));
+      setSubmittedSignatures((prev) => [
+        ...prev,
+        { orderId: selectedOrderId, signature },
+      ]);
+      setShowSignature(false);
+    }
   };
 
   const clearSignature = () => {
-    setSignature(null);
+    if (selectedOrderId) {
+      setSignatures((prev) => ({ ...prev, [selectedOrderId]: null }));
+    }
   };
 
-  const renderOrder = ({ item }: { item: Order }) => (
-    <View style={styles.orderItem}>
-      <View style={styles.orderDetails}>
-        <Text style={styles.orderText}>Start Time: {item.start_time}</Text>
-        <Text style={styles.orderText}>End Time: {item.end_time}</Text>
-        <Text style={styles.orderText}>Pick-Up Location: {item.pick_up_location}</Text>
-        <Text style={styles.orderText}>Drop-Off Location: {item.drop_of_location}</Text>
-      </View>
+  const handleSubmitAll = () => {
+    // Show confirmation alert
+    Alert.alert(
+      "Confirm Submission",
+      "Are you sure you want to submit all the data?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            // Process all submitted remarks and signatures
+            console.log("Submitting all remarks and signatures", {
+              submittedRemarks,
+              submittedSignatures,
+            });
 
+            // Clear all submitted data after processing
+            setSubmittedRemarks([]);
+            setSubmittedSignatures([]);
+            setRemarks({});
+            setSignatures({});
+            setIsSubmitted(true); // Update submission state
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const renderOrder = ({ item }: { item: { id: string } }) => (
+    <View style={styles.orderItem}>
       <View style={styles.inputSection}>
         <TextInput
           style={styles.input}
           placeholder="Enter remark..."
           placeholderTextColor="#888"
           value={remarks[item.id] || ""}
-          onChangeText={(text) => handleInputChange(item.id, text, notes[item.id] || "")}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Add a note..."
-          placeholderTextColor="#888"
-          value={notes[item.id] || ""}
-          onChangeText={(text) => handleInputChange(item.id, remarks[item.id] || "", text)}
+          onChangeText={(text) => handleInputChange(item.id, text)}
         />
       </View>
 
       <TouchableOpacity
-        style={[styles.submitButton, { opacity: remarks[item.id] || notes[item.id] ? 1 : 0.5 }]}
-        onPress={() => submitInputs(item.id)}
-        disabled={!remarks[item.id] && !notes[item.id]}
+        style={styles.submitRemarkButton}
+        onPress={() => submitRemark(item.id)}
+        disabled={!remarks[item.id]}
       >
-        <Text style={styles.buttonText}>Submit</Text>
+        <Text style={styles.buttonText}>Submit Remark</Text>
       </TouchableOpacity>
-
-      {item.remark && <Text style={styles.remarkText}>Remark: {item.remark}</Text>}
-      {item.note && <Text style={styles.noteText}>Note: {item.note}</Text>}
 
       <TouchableOpacity
         style={styles.signatureButton}
         onPress={() => {
           setShowSignature(true);
-          setSelectedOrderId(item.id); // Save selected order ID for signature
+          setSelectedOrderId(item.id);
         }}
       >
         <Text style={styles.buttonText}>Sign Here</Text>
@@ -113,7 +110,7 @@ const Handoff: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={currentOrders}
+        data={[{ id: "1" }]} // Placeholder for a single order
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         style={styles.ordersList}
@@ -135,12 +132,27 @@ const Handoff: React.FC = () => {
         </View>
       </Modal>
 
-      {signature && (
-        <View style={styles.signatureContainer}>
-          <Text style={styles.signatureLabel}>Signature:</Text>
-          <Image source={{ uri: signature }} style={styles.signatureImage} />
-        </View>
-      )}
+      {/* Display submitted remarks and signatures */}
+      <View style={styles.submissionContainer}>
+        {submittedRemarks.map((remark) => (
+          <View key={remark.orderId} style={styles.submissionItem}>
+            <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
+            {/* Display the corresponding signature if it exists */}
+            {submittedSignatures.find(sig => sig.orderId === remark.orderId) && (
+              <View style={styles.signatureContainer}>
+                <Text style={styles.signatureLabel}>Signature:</Text>
+                <Image source={{ uri: signatures[remark.orderId] || "" }} style={styles.signatureImage} />
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+
+      <TouchableOpacity style={styles.submitAllButton} onPress={handleSubmitAll}>
+        <Text style={styles.buttonText}>Submit All</Text>
+      </TouchableOpacity>
+
+      {isSubmitted && <Text style={styles.submissionMessage}>All data submitted successfully!</Text>}
     </View>
   );
 };
@@ -169,14 +181,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     width: "100%",
   },
-  orderDetails: {
-    marginBottom: 15,
-  },
-  orderText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
-  },
   inputSection: {
     marginBottom: 15,
   },
@@ -189,27 +193,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: "#f0f0f0",
   },
-  submitButton: {
+  submitRemarkButton: {
+    backgroundColor: "#28a745",
+    borderRadius: 25,
+    paddingVertical: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  signatureButton: {
     backgroundColor: "#007BFF",
     borderRadius: 25,
     paddingVertical: 10,
     alignItems: "center",
     marginBottom: 10,
   },
+  submitAllButton: {
+    backgroundColor: "#FF5733",
+    borderRadius: 25,
+    paddingVertical: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  remarkText: {
-    fontSize: 14,
-    color: "#007BFF",
-    marginTop: 10,
-  },
-  noteText: {
-    fontSize: 14,
-    color: "#555",
-    marginTop: 5,
   },
   signature: {
     width: '100%',
@@ -219,8 +227,26 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
   },
+  submissionContainer: {
+    marginTop: 20,
+    backgroundColor: "#ffffff",
+    padding: 10,
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  submissionItem: {
+    marginBottom: 10,
+  },
+  submissionText: {
+    fontSize: 14,
+    color: "#333",
+  },
   signatureContainer: {
-    marginTop: 10,
+    marginTop: 5,
     alignItems: "center",
   },
   signatureImage: {
@@ -234,13 +260,6 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: 'red',
     textDecorationLine: 'underline',
-  },
-  signatureButton: {
-    backgroundColor: "#007BFF",
-    borderRadius: 25,
-    paddingVertical: 10,
-    alignItems: "center",
-    marginBottom: 10,
   },
   modalContainer: {
     flex: 1,
@@ -257,11 +276,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingVertical: 10,
     alignItems: "center",
-    marginTop: 10,
   },
   signatureLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  submissionMessage: {
+    marginTop: 10,
     fontSize: 16,
-    marginBottom: 5,
-    color: "#333",
+    color: "green",
+    fontWeight: "bold",
   },
 });
