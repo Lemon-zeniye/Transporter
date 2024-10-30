@@ -1,93 +1,74 @@
-import ActiveShipments from "@/components/ActiveShipments";
 import CustomButton from "@/components/CustomButton";
-import EmptyList from "@/components/EmptyList";
-import { ActiveOrders } from "@/shared/models/shipmnet-orders.model";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  Button,
-} from "react-native";
+import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 
-const statuses = [
-  "Accept",
-  "Started",
-  "Reached Pickup",
-  "Received Order",
-  "Start Trip",
-  "Reached Destination",
-  "Handoff",
-];
+const StatusItem = ({ status, isMarked, isActive, isLast }) => {
+  return (
+    <View style={styles.statusItem}>
+      <View style={[styles.dot, isMarked && styles.markedDot]} />
+      <Text style={isMarked ? styles.marked : styles.unmarked}>
+        {status.name} {isMarked ? "✔️" : ""}
+      </Text>
+      {/* Line connecting dots */}
+      {!isLast && <View style={[styles.line, isMarked && styles.markedLine]} />}
+    </View>
+  );
+};
 
-const Status = () => {
+const App = () => {
+  // Define the statuses in a tree structure
+  const statuses = [
+    { id: 1, name: "Start Trip to Pickup Location", children: [] },
+    { id: 2, name: "Reached Pickup Location", children: [] },
+    { id: 3, name: "Received Order", children: [] },
+    { id: 4, name: "Start Trip to Delivery Location", children: [] },
+    { id: 5, name: "Reached Delivery Location", children: [] },
+    { id: 6, name: "Handoff", children: [] },
+  ];
+
+  // State to track marked statuses
+  const [markedStatuses, setMarkedStatuses] = useState({});
   const [activeStatusIndex, setActiveStatusIndex] = useState(0);
 
-  const handleNextStatus = () => {
-    setActiveStatusIndex((prevIndex) => {
-      return (prevIndex + 1) % statuses.length;
-    });
+  const handleUpdateStatuses = () => {
+    const updatedMarks = { ...markedStatuses };
+
+    for (let i = 0; i < statuses.length; i++) {
+      if (!updatedMarks[statuses[i].id]) {
+        updatedMarks[statuses[i].id] = true;
+        setActiveStatusIndex(i + 1);
+        break;
+      }
+    }
+    setMarkedStatuses(updatedMarks);
   };
 
-  const orderInfo = {
-    id: "1",
-    pickup_date: "OCT/30/2024",
-    start_time: "1:45 PM",
-    end_time: "4:45 PM",
-    pick_up_location: "Yeka, Gulf, Southern Region, Papua New Guinea",
-    drop_of_location: "Yeka, Agago, Northern Region, Uganda",
-  };
-
+  const buttonText =
+    activeStatusIndex < statuses.length
+      ? `${statuses[activeStatusIndex].name}`
+      : "Done";
   return (
-    <>
-      <View style={styles.orderItem}>
-        <Text style={styles.orderText}>Pickup Date</Text>
-        <Text className="text-xm font-bold">{orderInfo.pickup_date}</Text>
-        <Text style={styles.orderText}>Pickup Time</Text>
-        <Text className="text-xm font-bold">
-          {orderInfo.start_time} - {orderInfo.end_time}
-        </Text>
-        <Text style={styles.orderText}>Pick-Up Location</Text>
-        <Text className="text-xm font-bold">{orderInfo.pick_up_location}</Text>
-        <Text style={styles.orderText}>Drop-Off Location</Text>
-        <Text className="text-xm font-bold">{orderInfo.drop_of_location}</Text>
-        <View>
-          <Text className="mt-10 font-bold">0912345678</Text>
-          <CustomButton
-            buttonStyle="w-16 bg-blue-600 "
-            textStyle="text-white"
-            title="CALL"
-            handlePress={() => {
-              console.log();
-            }}
-            isLoading={false}
-          />
-        </View>
-      </View>
-
+    <View style={styles.mainContainer}>
       <View style={styles.container}>
-        <Text style={styles.title}>Order Status</Text>
         {statuses.map((status, index) => (
-          <Text
-            key={index}
-            style={[
-              styles.status,
-              index === activeStatusIndex
-                ? styles.activeStatus
-                : styles.inactiveStatus,
-            ]}
-          >
-            {status}
-          </Text>
+          <StatusItem
+            key={status.id}
+            status={status}
+            isMarked={markedStatuses[status.id]}
+            isActive={index === activeStatusIndex}
+            isLast={index === statuses.length - 1}
+          />
         ))}
-        <TouchableOpacity style={styles.button} onPress={handleNextStatus}>
-          <Text style={styles.buttonText}>Next Status</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleUpdateStatuses}
+          disabled={activeStatusIndex >= statuses.length}
+        >
+          <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 };
 
@@ -95,54 +76,67 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     padding: 20,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#f8f8f8",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  mainContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingLeft: 80,
+    backgroundColor: "#f8f8f8",
   },
-  status: {
-    fontSize: 18,
-    padding: 10,
+  statusItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
   },
-  activeStatus: {
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "black",
+    marginRight: 10,
+  },
+  markedDot: {
+    backgroundColor: "green",
+    borderColor: "green",
+  },
+  marked: {
+    textDecorationLine: "line-through",
     color: "green",
     fontWeight: "bold",
   },
-  inactiveStatus: {
-    color: "gray",
+  unmarked: {
+    color: "black",
+    fontWeight: "normal",
+  },
+  line: {
+    width: 2,
+    height: 31,
+    backgroundColor: "black",
+    position: "absolute",
+    left: 4,
+    top: 14,
+  },
+  markedLine: {
+    backgroundColor: "green",
   },
   button: {
-    marginTop: 20,
+    width: 250,
+    backgroundColor: "#007BFF",
     padding: 10,
-    backgroundColor: "blue",
     borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
   },
   buttonText: {
-    color: "white",
-    fontSize: 16,
-  },
-  orderText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
-  },
-  orderItem: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    marginVertical: 8,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    width: "90%",
-    alignSelf: "center",
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
 });
 
-export default Status;
+export default App;
