@@ -8,8 +8,8 @@ const Profile = () => {
         source={require("../../assets/images/profile.png")} // Replace with the actual image file name and path
         style={styles.profileImage}
       />
-      <Text style={styles.name}>Your Name</Text>
-      <Text style={styles.email}>youremail@example.com</Text>
+      <Text style={styles.name}>Abebe</Text>
+      <Text style={styles.email}>abebe@gmail.com</Text>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
       </TouchableOpacity>
