@@ -7,6 +7,8 @@ import EmptyList from "@/components/EmptyList";
 import { ActiveOrders } from "@/shared/models/shipmnet-orders.model";
 import ActiveShipments from "@/components/ActiveShipments";
 import CustomButton from "@/components/CustomButton";
+import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 const current_orders: ActiveOrders[] = [
   {
@@ -21,8 +23,9 @@ const current_orders: ActiveOrders[] = [
 
 const Home = () => {
   const [dropOfLocation, setDropOfLocation] = useState<string>(
-    current_orders[0].drop_of_location
+    current_orders[0].drop_of_location,
   );
+  const navigation = useNavigation();
   return (
     <>
       <SafeAreaView
@@ -46,16 +49,16 @@ const Home = () => {
             borderWidth: 2,
             borderRadius: 10,
             backgroundColor: "#ecf0f1",
-            height: 488,
+            height: 548,
           }}
         />
       </SafeAreaView>
       <CustomButton
-        buttonStyle="w-full bg-secondary my-4 mb-112"
+        buttonStyle="w-full bg-secondary my-4"
         textStyle="font-pregular text-center"
         title="ACCEPT ORDER"
         handlePress={() => {
-          navigation.navigate("Status");
+          navigation.navigate("Active Order");
         }}
         isLoading={false}
       />

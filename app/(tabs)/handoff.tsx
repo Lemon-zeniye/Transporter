@@ -10,12 +10,8 @@ import {
   Alert,
 } from "react-native";
 import React, { useState } from "react";
-<<<<<<< HEAD
 import SignatureCapture from "react-native-signature-canvas";
-=======
-import SignatureCapture from 'react-native-signature-canvas';
-import Icon from 'react-native-vector-icons/Ionicons';
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
+// import { Icon } from "react-native-vector-icons/Icon";
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
@@ -24,7 +20,6 @@ const Handoff: React.FC = () => {
   }>({});
   const [showSignature, setShowSignature] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-<<<<<<< HEAD
   const [submittedRemarks, setSubmittedRemarks] = useState<
     { orderId: string; remark: string }[]
   >([]);
@@ -32,11 +27,6 @@ const Handoff: React.FC = () => {
     { orderId: string; signature: string | null }[]
   >([]);
   const [isSubmitted, setIsSubmitted] = useState(false); // New state to track overall submission
-=======
-  const [submittedRemarks, setSubmittedRemarks] = useState<{ orderId: string; remark: string }[]>([]);
-  const [submittedSignatures, setSubmittedSignatures] = useState<{ orderId: string; signature: string | null }[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
 
   const handleInputChange = (orderId: string, remark: string) => {
     setRemarks((prev) => ({ ...prev, [orderId]: remark }));
@@ -131,11 +121,8 @@ const Handoff: React.FC = () => {
         <Text style={styles.buttonText}>Sign Here</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.cameraButton}
-        onPress={takePicture}
-      >
-        <Icon name="camera" size={20} color="#ffffff" />
+      <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
+        {/* <Icon name="camera" size={20} color="#ffffff" /> */}
         <Text style={styles.buttonText}>Take Picture</Text>
       </TouchableOpacity>
     </View>
@@ -173,14 +160,10 @@ const Handoff: React.FC = () => {
         {submittedRemarks.map((remark) => (
           <View key={remark.orderId} style={styles.submissionItem}>
             <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
-<<<<<<< HEAD
             {/* Display the corresponding signature if it exists */}
             {submittedSignatures.find(
               (sig) => sig.orderId === remark.orderId,
             ) && (
-=======
-            {submittedSignatures.find(sig => sig.orderId === remark.orderId) && (
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
               <View style={styles.signatureContainer}>
                 <Text style={styles.signatureLabel}>Signature:</Text>
                 <Image
@@ -258,8 +241,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cameraButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#ffa726",
     borderRadius: 5,
     paddingVertical: 8,
@@ -283,11 +266,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderWidth: 1,
-<<<<<<< HEAD
     borderColor: "#ccc",
-=======
-    borderColor: '#d1d9e0',
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
     marginTop: 10,
     borderRadius: 10,
   },
@@ -316,17 +295,12 @@ const styles = StyleSheet.create({
   signatureImage: {
     width: 100,
     height: 50,
-<<<<<<< HEAD
     borderColor: "#ccc",
-=======
-    borderColor: '#d1d9e0',
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
     borderWidth: 1,
     marginVertical: 5,
     borderRadius: 5,
   },
   clearButtonText: {
-<<<<<<< HEAD
     color: "red",
     textDecorationLine: "underline",
   },
@@ -339,16 +313,6 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     marginVertical: 10,
-=======
-    color: '#ff5252',
-    textDecorationLine: 'underline',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
   },
   modalButton: {
     backgroundColor: "#1f78b4",
@@ -364,22 +328,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 15,
   },
-  clearButton: {
-    marginVertical: 8,
-  },
+
   signatureLabel: {
     fontSize: 14,
-<<<<<<< HEAD
     fontWeight: "bold",
-  },
-  submissionMessage: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "green",
-    fontWeight: "bold",
-=======
-    fontWeight: 'bold',
-    color: "#455a64",
->>>>>>> 46e63999160799851742eb4dec629f5cbb023b0b
   },
 });
