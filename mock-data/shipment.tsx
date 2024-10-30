@@ -5,7 +5,7 @@ export const shipments = [
     pickupLocations: {
       multiple_pickup_location: false,
       pickup_location: "Yeka, Gulf, Southern Region, Papua New Guinea",
-      pickup_date: "2024-10-30T23:59:59",
+      pickup_date: "2024-OCT-30",
       from: "12:49",
       to: "12:52",
       contact_person: {
@@ -25,7 +25,7 @@ export const shipments = [
       },
       totalWeight: 672,
       dropoff_location: "Yeka, Agago, \n Northern Region, Uganda",
-      delivery_date: "10/23/2024",
+      delivery_date: "2024-NOV-10",
       receiver: {
         full_name: "Nati Tolosa Gadi",
         phone_number: "0987654321",

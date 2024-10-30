@@ -1,16 +1,27 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import CustomButton from "./CustomButton";
+
 import { ActiveOrders } from "@/shared/models/shipmnet-orders.model";
 import { Link, router } from "expo-router";
 import { shipments } from "@/mock-data/shipment";
 import { useNavigation } from "@react-navigation/native";
 
-const ActiveShipments = ({
-  current_orders,
-}: {
+import { FontAwesome } from "@expo/vector-icons";
+import DropDownPicker from "react-native-dropdown-picker";
+
+interface ActiveShipmentsProps {
   current_orders: ActiveOrders;
+  dropOfLocation: string; // Add this prop
+  setDropOfLocation: (value: string) => void; // Add this prop
+}
+const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
+  current_orders,
+  dropOfLocation,
+  setDropOfLocation,
 }) => {
+<<<<<<< HEAD
+  const [open, setOpen] = React.useState<boolean>(false); // Controls dropdown visibility
+=======
   const [isCardVisible, setIsCardVisible] = useState(false);
 
   const toggleCardVisibility = () => {
@@ -19,73 +30,72 @@ const ActiveShipments = ({
 
   const navigation = useNavigation();
 
+>>>>>>> bcb9c114048950068e16d30db1a97487cc092b8e
   const shipment = shipments[0];
-
   return (
-    <View>
-      <TouchableOpacity activeOpacity={0.7} onPress={toggleCardVisibility}>
-        <View className="flex flex-row justify-between">
+    <View style={{ padding: 16 }}>
+      {/* Outer padding for spacing */}
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => router.push("/Detail Order")}
+      >
+        {/* Pickup Location Section */}
+        <View className="flex flex-row justify-center mb-2">
           <View>
-            <Text className="text-xs">Pickup Date</Text>
-            <Text className="text-xl">{current_orders.pickup_date}</Text>
-            <Text className="text-xs font-pregular">Pickup Time</Text>
+            <Text className="text-xs  ">Pickup Location</Text>
+            <Text className="text-xl px-8">
+              {current_orders.pick_up_location}
+            </Text>
             <Text className="text-xl font-pregular">
-              {current_orders.start_time} {" - "} {current_orders.end_time}
+              {shipment.pickupLocations.pickup_date}, {"\t"}
+              {shipment.pickupLocations.from}
             </Text>
           </View>
         </View>
-        <View>
-          <Text className="text-xs font-pregular">Pickup Location</Text>
-          <Text className="text-xl font-pregular">
-            {current_orders.pick_up_location}
-          </Text>
-          <Text className="text-xs font-pregular">Dropoff Location</Text>
-          <Text className="text-xl font-pregular">
-            {current_orders.drop_of_location}
-          </Text>
+
+        {/* Directional Arrow */}
+        <View className="items-center my-2 mt-5">
+          <FontAwesome name="long-arrow-down" size={100} color="orange" />
+        </View>
+
+        {/* Dropoff Location Section with Dropdown */}
+        <View className="flex flex-row justify-center mt-2">
+          <View>
+            <Text className="text-xs font-pregular ml-10 mt-3 ">
+              Dropoff Location
+            </Text>
+
+            {/* Display the selected drop-off location */}
+            <Text className="text-xl font-pregular ml-20">
+              {dropOfLocation}
+            </Text>
+            <Text className="text-xl font-pregular ml-10">
+              {shipment.pickupLocations.delivery_date}, {"\t"}
+              {shipment.pickupLocations.from}
+            </Text>
+            <DropDownPicker
+              open={open}
+              setOpen={setOpen}
+              value={dropOfLocation}
+              setValue={setDropOfLocation} // Update dropOfLocation state in Home
+              items={[
+                {
+                  label: "DEBREZEYET",
+                  value: "DEBREZEYET",
+                },
+                {
+                  label: "MOJO",
+                  value: "MOJO",
+                },
+                { label: "ADAMA", value: "ADAMA" },
+                // Add more options as needed
+              ]}
+              style={{ marginTop: 8, backgroundColor: "#f9f9f9" }}
+              dropDownContainerStyle={{ backgroundColor: "#f1f1f1" }}
+            />
+          </View>
         </View>
       </TouchableOpacity>
-
-      {isCardVisible && (
-        <View className="bg-gray rounded-md mt-5">
-          <Text className="text-xs font-pregular">Contact Person Name</Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.contact_person.full_name}
-          </Text>
-          <Text className="text-xs font-pregular">
-            Contact Person Phone Number
-          </Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.contact_person.phone_number}
-          </Text>
-          <Text className="text-xs font-pregular">Item Description</Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.itemDescription}
-          </Text>
-          <Text className="text-xs font-pregular">Quantity</Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.quantity}
-          </Text>
-          <Text className="text-xs font-pregular">Receiver Name</Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.receiver.full_name}
-          </Text>
-          <Text className="text-xs font-pregular">Receiver Phone Number</Text>
-          <Text className="text-xl font-pregular">
-            {shipment.pickupLocations.receiver.phone_number}
-          </Text>
-        </View>
-      )}
-
-      <CustomButton
-        buttonStyle="w-full bg-secondary my-4"
-        textStyle="font-pregular text-center"
-        title="ACCEPT ORDER"
-        handlePress={() => {
-          navigation.navigate("Active Order");
-        }}
-        isLoading={false}
-      />
     </View>
   );
 };
