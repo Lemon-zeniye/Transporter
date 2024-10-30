@@ -1,16 +1,32 @@
-import { FlatList, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Modal, Alert } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Modal,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
-import SignatureCapture from 'react-native-signature-canvas';
-import Icon from 'react-native-vector-icons/Ionicons';
+import SignatureCapture from "react-native-signature-canvas";
+// import { Icon } from "react-native-vector-icons/Icon";
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
-  const [signatures, setSignatures] = useState<{ [key: string]: string | null }>({});
+  const [signatures, setSignatures] = useState<{
+    [key: string]: string | null;
+  }>({});
   const [showSignature, setShowSignature] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [submittedRemarks, setSubmittedRemarks] = useState<{ orderId: string; remark: string }[]>([]);
-  const [submittedSignatures, setSubmittedSignatures] = useState<{ orderId: string; signature: string | null }[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedRemarks, setSubmittedRemarks] = useState<
+    { orderId: string; remark: string }[]
+  >([]);
+  const [submittedSignatures, setSubmittedSignatures] = useState<
+    { orderId: string; signature: string | null }[]
+  >([]);
+  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track overall submission
 
   const handleInputChange = (orderId: string, remark: string) => {
     setRemarks((prev) => ({ ...prev, [orderId]: remark }));
@@ -19,10 +35,7 @@ const Handoff: React.FC = () => {
   const submitRemark = (orderId: string) => {
     const newRemark = remarks[orderId] || "";
     if (newRemark) {
-      setSubmittedRemarks((prev) => [
-        ...prev,
-        { orderId, remark: newRemark },
-      ]);
+      setSubmittedRemarks((prev) => [...prev, { orderId, remark: newRemark }]);
       setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the remark input after submission
     }
   };
@@ -69,7 +82,7 @@ const Handoff: React.FC = () => {
           },
         },
       ],
-      { cancelable: false }
+      { cancelable: false },
     );
   };
 
@@ -108,11 +121,8 @@ const Handoff: React.FC = () => {
         <Text style={styles.buttonText}>Sign Here</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.cameraButton}
-        onPress={takePicture}
-      >
-        <Icon name="camera" size={20} color="#ffffff" />
+      <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
+        {/* <Icon name="camera" size={20} color="#ffffff" /> */}
         <Text style={styles.buttonText}>Take Picture</Text>
       </TouchableOpacity>
     </View>
@@ -137,7 +147,10 @@ const Handoff: React.FC = () => {
           <TouchableOpacity style={styles.clearButton} onPress={clearSignature}>
             <Text style={styles.clearButtonText}>Clear Signature</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.modalButton} onPress={() => setShowSignature(false)}>
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={() => setShowSignature(false)}
+          >
             <Text style={styles.buttonText}>Done</Text>
           </TouchableOpacity>
         </View>
@@ -147,21 +160,34 @@ const Handoff: React.FC = () => {
         {submittedRemarks.map((remark) => (
           <View key={remark.orderId} style={styles.submissionItem}>
             <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
-            {submittedSignatures.find(sig => sig.orderId === remark.orderId) && (
+            {/* Display the corresponding signature if it exists */}
+            {submittedSignatures.find(
+              (sig) => sig.orderId === remark.orderId,
+            ) && (
               <View style={styles.signatureContainer}>
                 <Text style={styles.signatureLabel}>Signature:</Text>
-                <Image source={{ uri: signatures[remark.orderId] || "" }} style={styles.signatureImage} />
+                <Image
+                  source={{ uri: signatures[remark.orderId] || "" }}
+                  style={styles.signatureImage}
+                />
               </View>
             )}
           </View>
         ))}
       </View>
 
-      <TouchableOpacity style={styles.submitAllButton} onPress={handleSubmitAll}>
+      <TouchableOpacity
+        style={styles.submitAllButton}
+        onPress={handleSubmitAll}
+      >
         <Text style={styles.buttonText}>Submit All</Text>
       </TouchableOpacity>
 
-      {isSubmitted && <Text style={styles.submissionMessage}>All data submitted successfully!</Text>}
+      {isSubmitted && (
+        <Text style={styles.submissionMessage}>
+          All data submitted successfully!
+        </Text>
+      )}
     </View>
   );
 };
@@ -215,8 +241,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cameraButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#ffa726",
     borderRadius: 5,
     paddingVertical: 8,
@@ -237,10 +263,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   signature: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderWidth: 1,
-    borderColor: '#d1d9e0',
+    borderColor: "#ccc",
     marginTop: 10,
     borderRadius: 10,
   },
@@ -269,20 +295,24 @@ const styles = StyleSheet.create({
   signatureImage: {
     width: 100,
     height: 50,
-    borderColor: '#d1d9e0',
+    borderColor: "#ccc",
     borderWidth: 1,
     marginVertical: 5,
     borderRadius: 5,
   },
   clearButtonText: {
-    color: '#ff5252',
-    textDecorationLine: 'underline',
+    color: "red",
+    textDecorationLine: "underline",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 20,
+  },
+  clearButton: {
+    marginVertical: 10,
   },
   modalButton: {
     backgroundColor: "#1f78b4",
@@ -298,12 +328,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 15,
   },
-  clearButton: {
-    marginVertical: 8,
-  },
+
   signatureLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: "#455a64",
+    fontWeight: "bold",
   },
 });

@@ -1,22 +1,21 @@
-import CustomButton from "@/components/CustomButton";
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
 
-const StatusItem = ({ status, isMarked, isActive, isLast }) => {
+const StatusItem = ({ status, onPress, isMarked, isActive, isLast }) => {
   return (
-    <View style={styles.statusItem}>
+    <TouchableOpacity style={styles.statusItem} onPress={onPress}>
       <View style={[styles.dot, isMarked && styles.markedDot]} />
+
       <Text style={isMarked ? styles.marked : styles.unmarked}>
         {status.name} {isMarked ? "✔️" : ""}
       </Text>
-      {/* Line connecting dots */}
+
       {!isLast && <View style={[styles.line, isMarked && styles.markedLine]} />}
-    </View>
+    </TouchableOpacity>
   );
 };
-
-const App = () => {
-  // Define the statuses in a tree structure
+const Status = () => {
   const statuses = [
     { id: 1, name: "Start Trip to Pickup Location", children: [] },
     { id: 2, name: "Reached Pickup Location", children: [] },
@@ -26,7 +25,6 @@ const App = () => {
     { id: 6, name: "Handoff", children: [] },
   ];
 
-  // State to track marked statuses
   const [markedStatuses, setMarkedStatuses] = useState({});
   const [activeStatusIndex, setActiveStatusIndex] = useState(0);
 
@@ -47,6 +45,7 @@ const App = () => {
     activeStatusIndex < statuses.length
       ? `${statuses[activeStatusIndex].name}`
       : "Done";
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -57,6 +56,7 @@ const App = () => {
             isMarked={markedStatuses[status.id]}
             isActive={index === activeStatusIndex}
             isLast={index === statuses.length - 1}
+            onPress={() => router.push("/Route")}
           />
         ))}
 
@@ -73,20 +73,21 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    padding: 20,
-    backgroundColor: "#f8f8f8",
-  },
   mainContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
-    paddingLeft: 80,
+    paddingLeft: 40,
     backgroundColor: "#f8f8f8",
   },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    padding: 18,
+    backgroundColor: "#f8f8f8",
+  },
+
   statusItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -109,18 +110,20 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     color: "green",
     fontWeight: "bold",
+    fontSize: 18,
   },
   unmarked: {
     color: "black",
     fontWeight: "normal",
+    fontSize: 18,
   },
   line: {
     width: 2,
-    height: 31,
+    height: 37,
     backgroundColor: "black",
     position: "absolute",
     left: 4,
-    top: 14,
+    top: 16,
   },
   markedLine: {
     backgroundColor: "green",
@@ -136,7 +139,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: 15,
+  },
+  screenContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
+  },
+  screenText: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
 
-export default App;
+export default Status;
