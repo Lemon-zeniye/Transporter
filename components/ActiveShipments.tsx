@@ -19,18 +19,7 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
   dropOfLocation,
   setDropOfLocation,
 }) => {
-<<<<<<< HEAD
   const [open, setOpen] = React.useState<boolean>(false); // Controls dropdown visibility
-=======
-  const [isCardVisible, setIsCardVisible] = useState(false);
-
-  const toggleCardVisibility = () => {
-    setIsCardVisible(!isCardVisible);
-  };
-
-  const navigation = useNavigation();
-
->>>>>>> bcb9c114048950068e16d30db1a97487cc092b8e
   const shipment = shipments[0];
   return (
     <View style={{ padding: 16 }}>
