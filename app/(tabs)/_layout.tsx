@@ -12,7 +12,7 @@ type TabParamList = {
   Order: undefined;
   Profile: undefined;
   Handoff: undefined;
-  Active: undefined;
+  "Active Order": undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -24,7 +24,7 @@ function TabNavigator() {
         tabBarIcon: ({ color, size }) => {
           if (route.name === "Order") {
             return <FontAwesome6 name="box" color={color} size={size} />;
-          } else if (route.name === "Active") {
+          } else if (route.name === "Active Order") {
             return <FontAwesome6 name="box-open" color={color} size={size} />;
           } else if (route.name === "Handoff") {
             return <FontAwesome name="handshake-o" color={color} size={size} />;
@@ -44,7 +44,7 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Order" component={Order} />
-      <Tab.Screen name="Active" component={Active} />
+      <Tab.Screen name="Active Order" component={Active} />
       <Tab.Screen name="Handoff" component={Handoff} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

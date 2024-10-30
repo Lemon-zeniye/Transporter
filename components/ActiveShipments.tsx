@@ -2,8 +2,9 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import CustomButton from "./CustomButton";
 import { ActiveOrders } from "@/shared/models/shipmnet-orders.model";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { shipments } from "@/mock-data/shipment";
+import { useNavigation } from "@react-navigation/native";
 
 const ActiveShipments = ({
   current_orders,
@@ -15,6 +16,8 @@ const ActiveShipments = ({
   const toggleCardVisibility = () => {
     setIsCardVisible(!isCardVisible);
   };
+
+  const navigation = useNavigation();
 
   const shipment = shipments[0];
 
@@ -79,7 +82,7 @@ const ActiveShipments = ({
         textStyle="font-pregular text-center"
         title="ACCEPT ORDER"
         handlePress={() => {
-          router.push("/(tabs)status");
+          navigation.navigate("Active Order");
         }}
         isLoading={false}
       />
