@@ -11,6 +11,9 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import SignatureCapture from "react-native-signature-canvas";
+import { shipments } from "@/mock-data/shipment";
+
+const shipment = shipments[0];
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
@@ -137,12 +140,40 @@ const Handoff: React.FC = () => {
             placeholder="Quantity received"
             placeholderTextColor="#888"
             value={quantities[item.id] || ""}
-            onChangeText={(text) => handleQuantityChange(item.id, text)}
+            // onChangeText={(text) => handleQuantityChange(item.id, text)}
+            onChangeText={(text) => {
+              const numericValue = parseInt(text, 10);
+              if (
+                numericValue <= shipment.pickupLocations.quantity ||
+                text === ""
+              ) {
+                handleQuantityChange(item.id, text);
+              } else {
+                alert(
+                  `Quantity cannot exceed ${shipment.pickupLocations.quantity}`,
+                );
+              }
+            }}
             keyboardType="numeric"
+            maxLength={
+              shipment.pickupLocations.quantity?.toString().length || 0
+            }
           />
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => submitQuantity(item.id)}
+            onPress={() => {
+              if (
+                quantities[item.id] &&
+                parseInt(quantities[item.id], 10) <=
+                  shipment.pickupLocations.quantity
+              ) {
+                submitQuantity(item.id);
+              } else {
+                alert(
+                  `Quantity must be less than or equal to ${shipment.pickupLocations.quantity}`,
+                );
+              }
+            }}
             disabled={!quantities[item.id]}
           >
             <Text style={styles.buttonText}>Add</Text>

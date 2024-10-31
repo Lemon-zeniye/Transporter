@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
+import { shipments } from "@/mock-data/shipment";
+import { ScrollView } from "react-native-gesture-handler";
 
+const shipment = shipments[0];
 const StatusItem = ({ status, isMarked, isLast }) => {
   const handlePress = () => {
     switch (status.name) {
@@ -94,6 +97,55 @@ const Status = () => {
 
   return (
     <View style={styles.mainContainer}>
+      <View
+        style={{
+          backgroundColor: "#ecf0f1",
+          borderColor: "#000",
+          borderWidth: 1,
+          borderRadius: 10,
+          height: 350,
+        }}
+      >
+        <View>
+          <View>
+            <Text className="text-xl px-36">
+              {shipment.pickupLocations.pickup_location}
+            </Text>
+          </View>
+          <View className="items-end px-20">
+            <Text className="text-xm font-pregular">
+              {shipment.pickupLocations.pickup_date}, {"\n"}
+              {shipment.pickupLocations.from}
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ alignItems: "center", marginTop: -50 }}>
+          <Image
+            source={require("../../assets/images/truck.png")}
+            style={{ height: 80, width: 80 }}
+          />
+          <Image
+            source={require("../../assets/images/asphalt.jpg")}
+            style={{ width: 38, height: 160 }}
+          />
+        </View>
+
+        <View>
+          <View className="items-end px-20 -mt-8">
+            <Text className="text-xm font-pregular">
+              {shipment.pickupLocations.pickup_date}, {"\n"}
+              {shipment.pickupLocations.from}
+            </Text>
+          </View>
+          <View>
+            <Text className="text-xl px-44">
+              {shipment.pickupLocations.dropoff_location}
+            </Text>
+          </View>
+        </View>
+      </View>
+
       <View style={styles.container}>
         {statuses.map((status, index) => (
           <StatusItem
@@ -121,16 +173,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
-    paddingLeft: 50,
     backgroundColor: "#f8f8f8",
   },
   container: {
-    flex: 1,
-    marginTop: 250,
     justifyContent: "center",
     alignItems: "flex-start",
-    padding: 18,
+    paddingLeft: 80,
     backgroundColor: "#f8f8f8",
+    marginBottom: 100,
   },
   statusItem: {
     flexDirection: "row",

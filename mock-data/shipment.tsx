@@ -4,7 +4,7 @@ export const shipments = [
     shipmentNumber: "SHIP-001",
     pickupLocations: {
       multiple_pickup_location: false,
-      pickup_location: "Yeka, Gulf, Southern Region, Papua New Guinea",
+      pickup_location: "ADDIS ABABA",
       pickup_date: "2024-OCT-30",
       from: "12:49",
       to: "12:52",
@@ -24,7 +24,7 @@ export const shipments = [
         height: 3,
       },
       totalWeight: 672,
-      dropoff_location: "Yeka, Agago, \n Northern Region, Uganda",
+      dropoff_location: "ADAMA",
       delivery_date: "2024-NOV-10",
       receiver: {
         full_name: "Nati Tolosa Gadi",

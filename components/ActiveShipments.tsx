@@ -29,8 +29,8 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
       >
         <View>
           <View>
-            <Text className="text-xl px-20">
-              {current_orders.pick_up_location}
+            <Text className="text-xl px-24">
+              {shipment.pickupLocations.pickup_location}
             </Text>
           </View>
           <View className="items-end">
@@ -43,25 +43,25 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
 
         <View style={{ alignItems: "center", marginTop: -50 }}>
           <Image
-            source={require("../assets/images/result.png")}
+            source={require("../assets/images/truck.png")}
             style={{ height: 80, width: 80 }}
           />
           <Image
-            source={require("../assets/images/pngtree.jpg")}
+            source={require("../assets/images/asphalt.jpg")}
             style={{ width: 38, height: 160 }}
           />
         </View>
 
         <View>
-          <View style={{ paddingLeft: 180, marginTop: -30 }}>
+          <View className="items-end -mt-8">
             <Text className="text-xm font-pregular">
               {shipment.pickupLocations.pickup_date}, {"\n"}
               {shipment.pickupLocations.from}
             </Text>
           </View>
           <View>
-            <Text className="text-xl px-24">
-              {current_orders.drop_of_location}
+            <Text className="text-xl px-32">
+              {shipment.pickupLocations.dropoff_location}
             </Text>
           </View>
         </View>
