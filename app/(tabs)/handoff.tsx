@@ -160,7 +160,7 @@ const Handoff: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={[{ id: "1" }]} // Placeholder for a single order
+        data={[{ id: "1" }]} 
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         style={styles.ordersList}
@@ -332,10 +332,10 @@ const styles = StyleSheet.create({
   },
   submitAllButton: {
     backgroundColor: "#4caf50",
-    padding: 8, // Adjusted padding for smaller button
+    padding: 8, 
     borderRadius: 5,
     marginTop: 20,
-    alignSelf: "center", // Centering the button
+    alignSelf: "center", 
   },
   modalContainer: {
     flex: 1,
