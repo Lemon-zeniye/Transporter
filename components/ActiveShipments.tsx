@@ -19,16 +19,14 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
   dropOfLocation,
   setDropOfLocation,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(false); // Controls dropdown visibility
+  const [open, setOpen] = React.useState<boolean>(false);
   const shipment = shipments[0];
   return (
     <View style={{ padding: 16 }}>
-      {/* Outer padding for spacing */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => router.push("/Detail Order")}
       >
-        {/* Pickup Location Section */}
         <View className="flex flex-row justify-center mb-2">
           <View>
             <Text className="text-xs  ">Pickup Location</Text>
@@ -42,19 +40,16 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
           </View>
         </View>
 
-        {/* Directional Arrow */}
         <View className="items-center my-2 mt-5">
           <FontAwesome name="long-arrow-down" size={100} color="orange" />
         </View>
 
-        {/* Dropoff Location Section with Dropdown */}
         <View className="flex flex-row justify-center mt-2">
           <View>
             <Text className="text-xs font-pregular ml-10 mt-3 ">
               Dropoff Location
             </Text>
 
-            {/* Display the selected drop-off location */}
             <Text className="text-xl font-pregular ml-20">
               {dropOfLocation}
             </Text>
@@ -66,7 +61,7 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
               open={open}
               setOpen={setOpen}
               value={dropOfLocation}
-              setValue={setDropOfLocation} // Update dropOfLocation state in Home
+              setValue={setDropOfLocation}
               items={[
                 {
                   label: "DEBREZEYET",
@@ -77,7 +72,6 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
                   value: "MOJO",
                 },
                 { label: "ADAMA", value: "ADAMA" },
-                // Add more options as needed
               ]}
               style={{ marginTop: 8, backgroundColor: "#f9f9f9" }}
               dropDownContainerStyle={{ backgroundColor: "#f1f1f1" }}

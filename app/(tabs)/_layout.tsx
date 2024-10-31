@@ -5,13 +5,13 @@ import { FontAwesome, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import Order from "./home";
 import ProfileScreen from "./profile";
-import Handoff from "./handoff";
+
 import Active from "./status";
 
 type TabParamList = {
   Order: undefined;
   Profile: undefined;
-  Handoff: undefined;
+
   "Active Order": undefined;
 };
 
@@ -26,8 +26,6 @@ function TabNavigator() {
             return <FontAwesome6 name="box" color={color} size={size} />;
           } else if (route.name === "Active Order") {
             return <FontAwesome6 name="box-open" color={color} size={size} />;
-          } else if (route.name === "Handoff") {
-            return <FontAwesome name="handshake-o" color={color} size={size} />;
           } else if (route.name === "Profile") {
             return <FontAwesome5 name="user" color={color} size={size} />;
           }
@@ -45,7 +43,6 @@ function TabNavigator() {
     >
       <Tab.Screen name="Order" component={Order} />
       <Tab.Screen name="Active Order" component={Active} />
-      <Tab.Screen name="Handoff" component={Handoff} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
