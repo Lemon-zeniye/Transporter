@@ -55,19 +55,8 @@ const Status = () => {
   const handleUpdateStatuses = () => {
     const updatedMarks = { ...markedStatuses };
 
-<<<<<<< HEAD
-    for (let i = 0; i < statuses.length; i++) {
-      if (!updatedMarks[statuses[i].id]) {
-        updatedMarks[statuses[i].id] = true;
-        setActiveStatusIndex(i + 1);
-        break;
-      }
-    }
-    
-=======
     const currentStatus = statuses[activeStatusIndex];
     updatedMarks[currentStatus.id] = true;
->>>>>>> 108078affacbbac2f90605afca107998bdca3d4c
     setMarkedStatuses(updatedMarks);
 
     switch (currentStatus.name) {

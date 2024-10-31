@@ -11,6 +11,9 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import SignatureCapture from "react-native-signature-canvas";
+import { shipments } from "@/mock-data/shipment";
+
+const shipment = shipments[0];
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
@@ -139,10 +142,17 @@ const Handoff: React.FC = () => {
             value={quantities[item.id] || ""}
             onChangeText={(text) => handleQuantityChange(item.id, text)}
             keyboardType="numeric"
+            maxLength={shipment.pickupLocations.quantity}
           />
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => submitQuantity(item.id)}
+            onPress={() => {
+              if (item.text.length > 20) {
+                submitQuantity(item.id);
+              } else {
+                alert("Text length must be above 20 characters.");
+              }
+            }}
             disabled={!quantities[item.id]}
           >
             <Text style={styles.buttonText}>Add</Text>
