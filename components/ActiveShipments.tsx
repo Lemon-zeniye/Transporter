@@ -19,7 +19,7 @@ const ActiveShipments: React.FC<ActiveShipmentsProps> = ({
   dropOfLocation,
   setDropOfLocation,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(false); // Controls dropdown visibility
+  const [open, setOpen] = React.useState<boolean>(false);
   const shipment = shipments[0];
   return (
     <View style={{ padding: 16 }}>

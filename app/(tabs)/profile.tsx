@@ -1,19 +1,21 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
+import { router } from "expo-router";
 
 const Profile = () => {
+  const onPress = () => router.push("/(auth)/sign-in");
   return (
     <View style={styles.container}>
       <Image
         source={require("../../assets/images/profile.png")} // Replace with the actual image file name and path
         style={styles.profileImage}
       />
-      <Text style={styles.name}>Abebe</Text>
-      <Text style={styles.email}>abebe@gmail.com</Text>
+      <Text style={styles.name}>Chaltu</Text>
+      <Text style={styles.email}>chaltu@gmail.com</Text>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
@@ -24,7 +26,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+
     backgroundColor: "#f0f0f0",
     padding: 20,
   },

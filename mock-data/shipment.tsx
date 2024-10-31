@@ -10,7 +10,7 @@ export const shipments = [
       to: "12:52",
       contact_person: {
         full_name: "Kebede Guracha Mega",
-        phone_number: "0987654321",
+        phone_number: "+251912345678",
         email: "kebede@gmail.com",
       },
       id: "0fdd934b-0235-4c54-b9a6-5b0bad3054fb",
@@ -28,7 +28,7 @@ export const shipments = [
       delivery_date: "2024-NOV-10",
       receiver: {
         full_name: "Nati Tolosa Gadi",
-        phone_number: "0987654321",
+        phone_number: "+251912345678",
         email: "nati@gmail.com",
       },
     },

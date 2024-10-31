@@ -1,28 +1,52 @@
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 
-const StatusItem = ({ status, onPress, isMarked, isActive, isLast }) => {
+const StatusItem = ({ status, isMarked, isLast }) => {
+  const handlePress = () => {
+    switch (status.name) {
+      case "Start Trip to Pickup Location":
+        router.push("/Route");
+        break;
+      case "Reached Pickup Location":
+        router.push("/Reached Pickup");
+        break;
+      case "Received Order":
+        router.push("/handoff");
+        break;
+      case "Start Trip to Delivery Location":
+        router.push("/Route");
+        break;
+      case "Reached Delivery Location":
+        router.push("/Reached Destination");
+        break;
+      case "Handoff":
+        router.push("/handoff");
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.statusItem} onPress={onPress}>
+    <TouchableOpacity style={styles.statusItem} onPress={handlePress}>
       <View style={[styles.dot, isMarked && styles.markedDot]} />
-
       <Text style={isMarked ? styles.marked : styles.unmarked}>
-        {status.name} {isMarked ? "✔️" : ""}
+        {status.name}
       </Text>
-
       {!isLast && <View style={[styles.line, isMarked && styles.markedLine]} />}
     </TouchableOpacity>
   );
 };
+
 const Status = () => {
   const statuses = [
-    { id: 1, name: "Start Trip to Pickup Location", children: [] },
-    { id: 2, name: "Reached Pickup Location", children: [] },
-    { id: 3, name: "Received Order", children: [] },
-    { id: 4, name: "Start Trip to Delivery Location", children: [] },
-    { id: 5, name: "Reached Delivery Location", children: [] },
-    { id: 6, name: "Handoff", children: [] },
+    { id: 1, name: "Start Trip to Pickup Location" },
+    { id: 2, name: "Reached Pickup Location" },
+    { id: 3, name: "Received Order" },
+    { id: 4, name: "Start Trip to Delivery Location" },
+    { id: 5, name: "Reached Delivery Location" },
+    { id: 6, name: "Handoff" },
   ];
 
   const [markedStatuses, setMarkedStatuses] = useState({});
@@ -31,6 +55,7 @@ const Status = () => {
   const handleUpdateStatuses = () => {
     const updatedMarks = { ...markedStatuses };
 
+<<<<<<< HEAD
     for (let i = 0; i < statuses.length; i++) {
       if (!updatedMarks[statuses[i].id]) {
         updatedMarks[statuses[i].id] = true;
@@ -39,7 +64,38 @@ const Status = () => {
       }
     }
     
+=======
+    const currentStatus = statuses[activeStatusIndex];
+    updatedMarks[currentStatus.id] = true;
+>>>>>>> 108078affacbbac2f90605afca107998bdca3d4c
     setMarkedStatuses(updatedMarks);
+
+    switch (currentStatus.name) {
+      case "Start Trip to Pickup Location":
+        router.push("/Route");
+        break;
+      case "Reached Pickup Location":
+        router.push("/Reached Pickup");
+        break;
+      case "Received Order":
+        router.push("/handoff");
+        break;
+      case "Start Trip to Delivery Location":
+        router.push("/Route");
+        break;
+      case "Reached Delivery Location":
+        router.push("/Reached Destination");
+        break;
+      case "Handoff":
+        router.push("/handoff");
+        break;
+      default:
+        break;
+    }
+
+    if (activeStatusIndex < statuses.length - 1) {
+      setActiveStatusIndex((prevIndex) => prevIndex + 1);
+    }
   };
 
   const buttonText =
@@ -55,9 +111,7 @@ const Status = () => {
             key={status.id}
             status={status}
             isMarked={markedStatuses[status.id]}
-            isActive={index === activeStatusIndex}
             isLast={index === statuses.length - 1}
-            onPress={() => router.push("/Route")}
           />
         ))}
 
@@ -78,17 +132,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
-    paddingLeft: 40,
+    paddingLeft: 50,
     backgroundColor: "#f8f8f8",
   },
   container: {
     flex: 1,
+    marginTop: 250,
     justifyContent: "center",
     alignItems: "flex-start",
     padding: 18,
     backgroundColor: "#f8f8f8",
   },
-
   statusItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -108,7 +162,6 @@ const styles = StyleSheet.create({
     borderColor: "green",
   },
   marked: {
-    textDecorationLine: "line-through",
     color: "green",
     fontWeight: "bold",
     fontSize: 18,
@@ -141,16 +194,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 15,
-  },
-  screenContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f8f8",
-  },
-  screenText: {
-    fontSize: 24,
-    fontWeight: "bold",
   },
 });
 

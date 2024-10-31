@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import SignatureCapture from "react-native-signature-canvas";
-// import { Icon } from "react-native-vector-icons/Icon";
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
@@ -26,17 +25,37 @@ const Handoff: React.FC = () => {
   const [submittedSignatures, setSubmittedSignatures] = useState<
     { orderId: string; signature: string | null }[]
   >([]);
-  const [isSubmitted, setIsSubmitted] = useState(false); // New state to track overall submission
+  const [quantities, setQuantities] = useState<{ [key: string]: string }>({});
+  const [submittedQuantities, setSubmittedQuantities] = useState<
+    { orderId: string; quantity: string }[]
+  >([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (orderId: string, remark: string) => {
     setRemarks((prev) => ({ ...prev, [orderId]: remark }));
+  };
+
+  const handleQuantityChange = (orderId: string, quantity: string) => {
+    const numericValue = quantity.replace(/[^0-9]/g, "");
+    setQuantities((prev) => ({ ...prev, [orderId]: numericValue }));
   };
 
   const submitRemark = (orderId: string) => {
     const newRemark = remarks[orderId] || "";
     if (newRemark) {
       setSubmittedRemarks((prev) => [...prev, { orderId, remark: newRemark }]);
-      setRemarks((prev) => ({ ...prev, [orderId]: "" })); // Clear the remark input after submission
+      setRemarks((prev) => ({ ...prev, [orderId]: "" }));
+    }
+  };
+
+  const submitQuantity = (orderId: string) => {
+    const newQuantity = quantities[orderId] || "";
+    if (newQuantity) {
+      setSubmittedQuantities((prev) => [
+        ...prev,
+        { orderId, quantity: newQuantity },
+      ]);
+      setQuantities((prev) => ({ ...prev, [orderId]: "" }));
     }
   };
 
@@ -69,15 +88,18 @@ const Handoff: React.FC = () => {
         {
           text: "OK",
           onPress: () => {
-            console.log("Submitting all remarks and signatures", {
+            console.log("Submitting all remarks, signatures, and quantities", {
               submittedRemarks,
               submittedSignatures,
+              submittedQuantities,
             });
 
             setSubmittedRemarks([]);
             setSubmittedSignatures([]);
             setRemarks({});
             setSignatures({});
+            setQuantities({});
+            setSubmittedQuantities([]);
             setIsSubmitted(true);
           },
         },
@@ -87,51 +109,69 @@ const Handoff: React.FC = () => {
   };
 
   const takePicture = () => {
-    // Add camera logic here
     console.log("Taking picture...");
   };
 
   const renderOrder = ({ item }: { item: { id: string } }) => (
     <View style={styles.orderItem}>
       <View style={styles.inputSection}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter remark..."
-          placeholderTextColor="#888"
-          value={remarks[item.id] || ""}
-          onChangeText={(text) => handleInputChange(item.id, text)}
-        />
+        <View style={styles.remarkInputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter remark..."
+            placeholderTextColor="#888"
+            value={remarks[item.id] || ""}
+            onChangeText={(text) => handleInputChange(item.id, text)}
+          />
+          <TouchableOpacity
+            style={styles.submitRemarkButton}
+            onPress={() => submitRemark(item.id)}
+            disabled={!remarks[item.id]}
+          >
+            <Text style={styles.buttonText}>Submit Remark</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.quantitySection}>
+          <TextInput
+            style={styles.input}
+            placeholder="Quantity received"
+            placeholderTextColor="#888"
+            value={quantities[item.id] || ""}
+            onChangeText={(text) => handleQuantityChange(item.id, text)}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => submitQuantity(item.id)}
+            disabled={!quantities[item.id]}
+          >
+            <Text style={styles.buttonText}>Add</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <TouchableOpacity
-        style={styles.submitRemarkButton}
-        onPress={() => submitRemark(item.id)}
-        disabled={!remarks[item.id]}
-      >
-        <Text style={styles.buttonText}>Submit Remark</Text>
-      </TouchableOpacity>
+      <View style={styles.signatureCameraContainer}>
+        <TouchableOpacity
+          style={styles.signatureButton}
+          onPress={() => {
+            setShowSignature(true);
+            setSelectedOrderId(item.id);
+          }}
+        >
+          <Text style={styles.buttonText}>Sign Here</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.signatureButton}
-        onPress={() => {
-          setShowSignature(true);
-          setSelectedOrderId(item.id);
-        }}
-      >
-        <Text style={styles.buttonText}>Sign Here</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
-        {/* <Icon name="camera" size={20} color="#ffffff" /> */}
-        <Text style={styles.buttonText}>Take Picture</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
+          <Text style={styles.buttonText}>Take Picture</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={[{ id: "1" }]} // Placeholder for a single order
+        data={[{ id: "1" }]}
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         style={styles.ordersList}
@@ -160,7 +200,6 @@ const Handoff: React.FC = () => {
         {submittedRemarks.map((remark) => (
           <View key={remark.orderId} style={styles.submissionItem}>
             <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
-            {/* Display the corresponding signature if it exists */}
             {submittedSignatures.find(
               (sig) => sig.orderId === remark.orderId,
             ) && (
@@ -172,6 +211,14 @@ const Handoff: React.FC = () => {
                 />
               </View>
             )}
+          </View>
+        ))}
+
+        {submittedQuantities.map((item) => (
+          <View key={item.orderId} style={styles.submissionItem}>
+            <Text style={styles.submissionText}>
+              Quantity received: {item.quantity}
+            </Text>
           </View>
         ))}
       </View>
@@ -218,6 +265,15 @@ const styles = StyleSheet.create({
   inputSection: {
     marginBottom: 10,
   },
+  remarkInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  quantitySection: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   input: {
     height: 40,
     borderColor: "#d1d9e0",
@@ -225,112 +281,106 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 15,
     backgroundColor: "#f9fbfd",
+    marginBottom: 10,
+    flex: 1,
+  },
+  addButton: {
+    backgroundColor: "#4caf50",
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
   },
   submitRemarkButton: {
-    backgroundColor: "#1f78b4",
+    backgroundColor: "#2196F3",
+    padding: 10,
     borderRadius: 5,
-    paddingVertical: 8,
-    alignItems: "center",
-    marginBottom: 8,
+    marginLeft: 10,
+  },
+  signatureCameraContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
   },
   signatureButton: {
-    backgroundColor: "#1f78b4",
+    backgroundColor: "#ff9800",
+    padding: 10,
     borderRadius: 5,
-    paddingVertical: 8,
-    alignItems: "center",
-    marginBottom: 8,
+    flex: 1,
+    marginRight: 10,
   },
   cameraButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffa726",
+    backgroundColor: "#3f51b5",
+    padding: 10,
     borderRadius: 5,
-    paddingVertical: 8,
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  submitAllButton: {
-    backgroundColor: "#1f78b4",
-    borderRadius: 5,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontWeight: "600",
-    fontSize: 16,
-    marginLeft: 5,
-  },
-  signature: {
-    width: "100%",
-    height: 200,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginTop: 10,
-    borderRadius: 10,
+    flex: 1,
   },
   submissionContainer: {
     marginTop: 20,
-    backgroundColor: "#ffffff",
-    padding: 15,
-    borderRadius: 10,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
   },
   submissionItem: {
     marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#e8f0fe",
+    borderRadius: 5,
   },
   submissionText: {
-    fontSize: 14,
-    color: "#455a64",
+    fontSize: 16,
   },
   signatureContainer: {
     marginTop: 5,
+    flexDirection: "row",
     alignItems: "center",
+  },
+  signatureLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 5,
   },
   signatureImage: {
     width: 100,
     height: 50,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginVertical: 5,
-    borderRadius: 5,
+    resizeMode: "contain",
   },
-  clearButtonText: {
-    color: "red",
-    textDecorationLine: "underline",
+  submitAllButton: {
+    backgroundColor: "#4caf50",
+    padding: 8,
+    borderRadius: 5,
+    marginTop: 20,
+    alignSelf: "center",
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   clearButton: {
-    marginVertical: 10,
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  clearButtonText: {
+    color: "#ffffff",
   },
   modalButton: {
-    backgroundColor: "#1f78b4",
-    borderRadius: 5,
+    backgroundColor: "#3f51b5",
     padding: 10,
-    alignItems: "center",
-    marginTop: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#ffffff",
+    textAlign: "center",
   },
   submissionMessage: {
-    color: "#2e7d32",
+    marginTop: 20,
     fontSize: 16,
-    fontWeight: "600",
     textAlign: "center",
-    marginTop: 15,
+    color: "green",
   },
-
-  signatureLabel: {
-    fontSize: 14,
-    fontWeight: "bold",
+  signature: {
+    width: "90%",
+    height: 200,
+    backgroundColor: "#ffffff",
   },
 });

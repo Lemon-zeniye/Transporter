@@ -37,7 +37,7 @@ const SignIn = () => {
               handleChangeText={(e: any) =>
                 setFormValue({ ...formValue, email: e })
               }
-              otherStyles="mt-7"
+              otherStyles="mt-7 text-white"
             />
             <FormField
               title="Password"
@@ -46,11 +46,11 @@ const SignIn = () => {
               handleChangeText={(e: any) =>
                 setFormValue({ ...formValue, password: e })
               }
-              otherStyles="mt-7"
+              otherStyles="mt-7 text-white"
             />
           </View>
           <CustomButton
-            buttonStyle="bg-secondary mt-7 w-full"
+            buttonStyle="bg-secondary mt-7 w-full text-white"
             textStyle="text-primary"
             title="Sign In"
             handlePress={onSubmit}
