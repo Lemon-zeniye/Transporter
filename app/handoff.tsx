@@ -14,13 +14,21 @@ import SignatureCapture from "react-native-signature-canvas";
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
-  const [signatures, setSignatures] = useState<{ [key: string]: string | null }>({});
+  const [signatures, setSignatures] = useState<{
+    [key: string]: string | null;
+  }>({});
   const [showSignature, setShowSignature] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [submittedRemarks, setSubmittedRemarks] = useState<{ orderId: string; remark: string }[]>([]);
-  const [submittedSignatures, setSubmittedSignatures] = useState<{ orderId: string; signature: string | null }[]>([]);
+  const [submittedRemarks, setSubmittedRemarks] = useState<
+    { orderId: string; remark: string }[]
+  >([]);
+  const [submittedSignatures, setSubmittedSignatures] = useState<
+    { orderId: string; signature: string | null }[]
+  >([]);
   const [quantities, setQuantities] = useState<{ [key: string]: string }>({});
-  const [submittedQuantities, setSubmittedQuantities] = useState<{ orderId: string; quantity: string }[]>([]);
+  const [submittedQuantities, setSubmittedQuantities] = useState<
+    { orderId: string; quantity: string }[]
+  >([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (orderId: string, remark: string) => {
@@ -43,7 +51,10 @@ const Handoff: React.FC = () => {
   const submitQuantity = (orderId: string) => {
     const newQuantity = quantities[orderId] || "";
     if (newQuantity) {
-      setSubmittedQuantities((prev) => [...prev, { orderId, quantity: newQuantity }]);
+      setSubmittedQuantities((prev) => [
+        ...prev,
+        { orderId, quantity: newQuantity },
+      ]);
       setQuantities((prev) => ({ ...prev, [orderId]: "" }));
     }
   };
@@ -160,7 +171,7 @@ const Handoff: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={[{ id: "1" }]} // Placeholder for a single order
+        data={[{ id: "1" }]}
         renderItem={renderOrder}
         keyExtractor={(item) => item.id}
         style={styles.ordersList}
@@ -202,7 +213,7 @@ const Handoff: React.FC = () => {
             )}
           </View>
         ))}
-        
+
         {submittedQuantities.map((item) => (
           <View key={item.orderId} style={styles.submissionItem}>
             <Text style={styles.submissionText}>
@@ -332,10 +343,10 @@ const styles = StyleSheet.create({
   },
   submitAllButton: {
     backgroundColor: "#4caf50",
-    padding: 8, // Adjusted padding for smaller button
+    padding: 8,
     borderRadius: 5,
     marginTop: 20,
-    alignSelf: "center", // Centering the button
+    alignSelf: "center",
   },
   modalContainer: {
     flex: 1,

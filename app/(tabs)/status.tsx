@@ -8,11 +8,17 @@ const StatusItem = ({ status, isMarked, isLast }) => {
       case "Start Trip to Pickup Location":
         router.push("/Route");
         break;
+      case "Reached Pickup Location":
+        router.push("/Reached Pickup");
+        break;
       case "Received Order":
         router.push("/handoff");
         break;
       case "Start Trip to Delivery Location":
         router.push("/Route");
+        break;
+      case "Reached Delivery Location":
+        router.push("/Reached Destination");
         break;
       case "Handoff":
         router.push("/handoff");
@@ -57,11 +63,17 @@ const Status = () => {
       case "Start Trip to Pickup Location":
         router.push("/Route");
         break;
+      case "Reached Pickup Location":
+        router.push("/Reached Pickup");
+        break;
       case "Received Order":
         router.push("/handoff");
         break;
       case "Start Trip to Delivery Location":
         router.push("/Route");
+        break;
+      case "Reached Delivery Location":
+        router.push("/Reached Destination");
         break;
       case "Handoff":
         router.push("/handoff");
@@ -109,11 +121,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
-    paddingLeft: 40,
+    paddingLeft: 50,
     backgroundColor: "#f8f8f8",
   },
   container: {
     flex: 1,
+    marginTop: 250,
     justifyContent: "center",
     alignItems: "flex-start",
     padding: 18,
