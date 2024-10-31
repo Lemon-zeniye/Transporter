@@ -17,13 +17,13 @@ const current_orders: ActiveOrders[] = [
     start_time: "1:45 PM",
     end_time: "4:45 PM",
     pick_up_location: "Addis Ababa",
-    drop_of_location: "DEBREZEYET",
+    drop_of_location: "ADAMA",
   },
 ];
 
 const Home = () => {
   const [dropOfLocation, setDropOfLocation] = useState<string>(
-    current_orders[0].drop_of_location,
+    current_orders[0].drop_of_location
   );
   const navigation = useNavigation();
   return (

@@ -38,6 +38,7 @@ const Status = () => {
         break;
       }
     }
+    
     setMarkedStatuses(updatedMarks);
   };
 
