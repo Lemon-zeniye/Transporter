@@ -17,21 +17,13 @@ const shipment = shipments[0];
 
 const Handoff: React.FC = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
-  const [signatures, setSignatures] = useState<{
-    [key: string]: string | null;
-  }>({});
+  const [signatures, setSignatures] = useState<{ [key: string]: string | null }>({});
   const [showSignature, setShowSignature] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [submittedRemarks, setSubmittedRemarks] = useState<
-    { orderId: string; remark: string }[]
-  >([]);
-  const [submittedSignatures, setSubmittedSignatures] = useState<
-    { orderId: string; signature: string | null }[]
+  const [submittedData, setSubmittedData] = useState<
+    { orderId: string; remark: string; quantity: string }[]
   >([]);
   const [quantities, setQuantities] = useState<{ [key: string]: string }>({});
-  const [submittedQuantities, setSubmittedQuantities] = useState<
-    { orderId: string; quantity: string }[]
-  >([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (orderId: string, remark: string) => {
@@ -43,21 +35,16 @@ const Handoff: React.FC = () => {
     setQuantities((prev) => ({ ...prev, [orderId]: numericValue }));
   };
 
-  const submitRemark = (orderId: string) => {
-    const newRemark = remarks[orderId] || "";
-    if (newRemark) {
-      setSubmittedRemarks((prev) => [...prev, { orderId, remark: newRemark }]);
-      setRemarks((prev) => ({ ...prev, [orderId]: "" }));
-    }
-  };
+  const handleSubmitData = (orderId: string) => {
+    const remark = remarks[orderId] || "";
+    const quantity = quantities[orderId] || "";
 
-  const submitQuantity = (orderId: string) => {
-    const newQuantity = quantities[orderId] || "";
-    if (newQuantity) {
-      setSubmittedQuantities((prev) => [
+    if (remark && quantity) {
+      setSubmittedData((prev) => [
         ...prev,
-        { orderId, quantity: newQuantity },
+        { orderId, remark, quantity },
       ]);
+      setRemarks((prev) => ({ ...prev, [orderId]: "" }));
       setQuantities((prev) => ({ ...prev, [orderId]: "" }));
     }
   };
@@ -65,10 +52,6 @@ const Handoff: React.FC = () => {
   const handleSignature = (signature: string) => {
     if (selectedOrderId) {
       setSignatures((prev) => ({ ...prev, [selectedOrderId]: signature }));
-      setSubmittedSignatures((prev) => [
-        ...prev,
-        { orderId: selectedOrderId, signature },
-      ]);
       setShowSignature(false);
     }
   };
@@ -91,23 +74,16 @@ const Handoff: React.FC = () => {
         {
           text: "OK",
           onPress: () => {
-            console.log("Submitting all remarks, signatures, and quantities", {
-              submittedRemarks,
-              submittedSignatures,
-              submittedQuantities,
-            });
-
-            setSubmittedRemarks([]);
-            setSubmittedSignatures([]);
+            console.log("Submitting all data", { submittedData, signatures });
+            setSubmittedData([]);
             setRemarks({});
             setSignatures({});
             setQuantities({});
-            setSubmittedQuantities([]);
             setIsSubmitted(true);
           },
         },
       ],
-      { cancelable: false },
+      { cancelable: false }
     );
   };
 
@@ -118,67 +94,43 @@ const Handoff: React.FC = () => {
   const renderOrder = ({ item }: { item: { id: string } }) => (
     <View style={styles.orderItem}>
       <View style={styles.inputSection}>
-        <View style={styles.remarkInputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter remark..."
-            placeholderTextColor="#888"
-            value={remarks[item.id] || ""}
-            onChangeText={(text) => handleInputChange(item.id, text)}
-          />
-          <TouchableOpacity
-            style={styles.submitRemarkButton}
-            onPress={() => submitRemark(item.id)}
-            disabled={!remarks[item.id]}
-          >
-            <Text style={styles.buttonText}>Submit Remark</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.quantitySection}>
-          <TextInput
-            style={styles.input}
-            placeholder="Quantity received"
-            placeholderTextColor="#888"
-            value={quantities[item.id] || ""}
-            // onChangeText={(text) => handleQuantityChange(item.id, text)}
-            onChangeText={(text) => {
-              const numericValue = parseInt(text, 10);
-              if (
-                numericValue <= shipment.pickupLocations.quantity ||
-                text === ""
-              ) {
-                handleQuantityChange(item.id, text);
-              } else {
-                alert(
-                  `Quantity cannot exceed ${shipment.pickupLocations.quantity}`,
-                );
-              }
-            }}
-            keyboardType="numeric"
-            maxLength={
-              shipment.pickupLocations.quantity?.toString().length || 0
+        <TextInput
+          style={styles.input}
+          placeholder="Enter remark..."
+          placeholderTextColor="#888"
+          value={remarks[item.id] || ""}
+          onChangeText={(text) => handleInputChange(item.id, text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Quantity received"
+          placeholderTextColor="#888"
+          value={quantities[item.id] || ""}
+          onChangeText={(text) => {
+            const numericValue = parseInt(text, 10);
+            if (
+              numericValue <= shipment.pickupLocations.quantity ||
+              text === ""
+            ) {
+              handleQuantityChange(item.id, text);
+            } else {
+              alert(
+                `Quantity cannot exceed ${shipment.pickupLocations.quantity}`
+              );
             }
-          />
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => {
-              if (
-                quantities[item.id] &&
-                parseInt(quantities[item.id], 10) <=
-                  shipment.pickupLocations.quantity
-              ) {
-                submitQuantity(item.id);
-              } else {
-                alert(
-                  `Quantity must be less than or equal to ${shipment.pickupLocations.quantity}`,
-                );
-              }
-            }}
-            disabled={!quantities[item.id]}
-          >
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
-        </View>
+          }}
+          keyboardType="numeric"
+          maxLength={
+            shipment.pickupLocations.quantity?.toString().length || 0
+          }
+        />
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => handleSubmitData(item.id)}
+          disabled={!remarks[item.id] || !quantities[item.id]}
+        >
+          <Text style={styles.buttonText}>Submit Remark & Quantity</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.signatureCameraContainer}>
@@ -228,28 +180,20 @@ const Handoff: React.FC = () => {
       </Modal>
 
       <View style={styles.submissionContainer}>
-        {submittedRemarks.map((remark) => (
-          <View key={remark.orderId} style={styles.submissionItem}>
-            <Text style={styles.submissionText}>Remark: {remark.remark}</Text>
-            {submittedSignatures.find(
-              (sig) => sig.orderId === remark.orderId,
-            ) && (
+        {submittedData.map((data) => (
+          <View key={data.orderId} style={styles.submissionItem}>
+            <Text style={styles.submissionText}>
+              Remark: {data.remark}, Quantity received: {data.quantity}
+            </Text>
+            {signatures[data.orderId] && (
               <View style={styles.signatureContainer}>
                 <Text style={styles.signatureLabel}>Signature:</Text>
                 <Image
-                  source={{ uri: signatures[remark.orderId] || "" }}
+                  source={{ uri: signatures[data.orderId] || "" }}
                   style={styles.signatureImage}
                 />
               </View>
             )}
-          </View>
-        ))}
-
-        {submittedQuantities.map((item) => (
-          <View key={item.orderId} style={styles.submissionItem}>
-            <Text style={styles.submissionText}>
-              Quantity received: {item.quantity}
-            </Text>
           </View>
         ))}
       </View>
@@ -296,15 +240,6 @@ const styles = StyleSheet.create({
   inputSection: {
     marginBottom: 10,
   },
-  remarkInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  quantitySection: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   input: {
     height: 40,
     borderColor: "#d1d9e0",
@@ -313,19 +248,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: "#f9fbfd",
     marginBottom: 10,
-    flex: 1,
   },
-  addButton: {
-    backgroundColor: "#4caf50",
-    padding: 10,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  submitRemarkButton: {
+  submitButton: {
     backgroundColor: "#2196F3",
-    padding: 10,
+    paddingVertical: 12,
     borderRadius: 5,
-    marginLeft: 10,
+    marginTop: 10,
+    width: "100%", // Set width to 100% for full container width
+    justifyContent: "center",
+    alignItems: "center",
   },
   signatureCameraContainer: {
     flexDirection: "row",
@@ -349,69 +280,78 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submissionItem: {
-    marginBottom: 10,
     padding: 10,
-    backgroundColor: "#e8f0fe",
+    backgroundColor: "#e8f5e9",
     borderRadius: 5,
+    marginVertical: 5,
   },
   submissionText: {
-    fontSize: 16,
+    fontSize: 14,
+    color: "#333",
   },
   signatureContainer: {
-    marginTop: 5,
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 5,
   },
   signatureLabel: {
-    fontSize: 16,
     fontWeight: "bold",
-    marginRight: 5,
   },
   signatureImage: {
     width: 100,
     height: 50,
-    resizeMode: "contain",
+    marginLeft: 5,
+    borderRadius: 5,
   },
   submitAllButton: {
-    backgroundColor: "#4caf50",
-    padding: 8,
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 15,
     borderRadius: 5,
     marginTop: 20,
     alignSelf: "center",
+    width: "80%",
+  },
+  submissionMessage: {
+    fontSize: 16,
+    color: "green",
+    textAlign: "center",
+    marginTop: 15,
   },
   modalContainer: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-  },
-  clearButton: {
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  clearButtonText: {
-    color: "#ffffff",
-  },
-  modalButton: {
-    backgroundColor: "#3f51b5",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "#ffffff",
-    textAlign: "center",
-  },
-  submissionMessage: {
-    marginTop: 20,
-    fontSize: 16,
-    textAlign: "center",
-    color: "green",
   },
   signature: {
     width: "90%",
     height: 200,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+  },
+  modalButton: {
+    marginTop: 10,
+    backgroundColor: "#2196F3",
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: "center",
+  },
+  clearButton: {
+    marginTop: 10,
+    backgroundColor: "#ff5722",
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: "center",
+  },
+  clearButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
